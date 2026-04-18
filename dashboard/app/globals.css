@@ -1,0 +1,170 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink: #0f172a;
+  --moss: #2563eb;
+  --signal: #059669;
+  --mist: #eff6ff;
+  --bone: #f9fafb;
+  --paper: #ffffff;
+  --rust: #dc2626;
+  --amber: #d97706;
+  --surface: #ffffff;
+  --surface-2: #f3f4f6;
+  --border: #e5e7eb;
+  --border-2: #f0f1f3;
+
+  --hairline: #e5e7eb;
+  --hairline-strong: #d1d5db;
+  --hairline-soft: #f3f4f6;
+  --ink-muted: #64748b;
+  --ink-faint: #94a3b8;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--bone);
+  color: var(--ink);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body.no-scroll {
+  overflow: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ——— keyframes ——— */
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.35; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+@keyframes edgeFlow {
+  from { stroke-dashoffset: 16; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes tickerScroll {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes nodeGlow {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes applyingPulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+@keyframes xShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* ——— utilities ——— */
+
+.thoughts-mask {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 64px, black 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, black 64px, black 100%);
+}
+
+.ticker-track {
+  animation: tickerScroll 42s linear infinite;
+  will-change: transform;
+}
+
+.pulse-halo {
+  animation: pulse 1.6s ease-out infinite;
+  will-change: transform, opacity;
+}
+
+.pulse-halo-idle {
+  animation: pulse 5s ease-out infinite;
+  will-change: transform, opacity;
+}
+
+.edge-flowing {
+  stroke-dasharray: 6 6;
+  animation: edgeFlow 0.9s linear infinite;
+}
+
+.node-glow-sweep {
+  animation: nodeGlow 1.6s ease-in-out infinite;
+  will-change: transform;
+}
+
+.applying-pulse {
+  animation: applyingPulse 1.8s ease-in-out infinite;
+}
+
+.x-shake {
+  animation: xShake 280ms ease-out;
+}
+
+.hairline-bottom { border-bottom: 1px solid var(--hairline); }
+.hairline-top { border-top: 1px solid var(--hairline); }
+.hairline-right { border-right: 1px solid var(--hairline); }
+.hairline-left { border-left: 1px solid var(--hairline); }
+.hairline { border: 1px solid var(--hairline); }
+
+.display-italic {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.surface-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.page-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-halo,
+  .pulse-halo-idle,
+  .ticker-track,
+  .edge-flowing,
+  .node-glow-sweep,
+  .applying-pulse {
+    animation: none !important;
+  }
+}
+
+/* thin scrollbars */
+.scrollbar-thin::-webkit-scrollbar { width: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: color-mix(in oklch, var(--ink) 15%, transparent); border-radius: 2px; }
+
+::selection {
+  background: color-mix(in oklch, var(--signal) 30%, transparent);
+  color: var(--ink);
+}

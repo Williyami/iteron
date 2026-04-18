@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(supabase status *)",
+      "Bash(supabase projects *)",
+      "Bash(supabase link *)",
+      "Bash(supabase db *)",
+      "Bash(supabase --linked projects api-keys)",
+      "Bash(npx skills *)",
+      "Read(//mnt/skills/public/frontend-design/**)",
+      "Bash(node .agents/skills/impeccable/scripts/cleanup-deprecated.mjs)",
+      "Edit(/.claude/skills/impeccable/**)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(ln -sf ../.env .env.local)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/dashboard)",
+      "Bash(npx tsc *)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(./node_modules/.bin/tsc --noEmit)",
+      "Bash(npx next *)"
+    ]
+  }
+}

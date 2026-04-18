@@ -1,0 +1,14 @@
+{
+  "name": "iteron-ai",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev:dashboard": "cd dashboard && npm run dev",
+    "dev:agents": "cd agents && uvicorn main:app --reload --port 8000",
+    "dev": "concurrently \"npm run dev:dashboard\" \"npm run dev:agents\"",
+    "setup": "npm install && cd dashboard && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8"
+  }
+}
