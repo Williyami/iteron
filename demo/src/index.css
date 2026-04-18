@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* PageTurn — editorial dark theme */
+@layer base {
+  :root {
+    /* Editorial light palette — paper & ink */
+    --background: 39 33% 96%;          /* warm off-white paper */
+    --foreground: 0 0% 8%;             /* near-black ink */
+
+    --card: 39 30% 98%;
+    --card-foreground: 0 0% 8%;
+
+    --popover: 39 30% 98%;
+    --popover-foreground: 0 0% 8%;
+
+    --primary: 32 70% 40%;
+    --primary-foreground: 39 33% 96%;
+
+    --secondary: 39 20% 90%;
+    --secondary-foreground: 0 0% 8%;
+
+    --muted: 39 18% 90%;
+    --muted-foreground: 0 0% 38%;
+
+    --accent: 32 70% 40%;
+    --accent-foreground: 39 33% 96%;
+
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 39 33% 96%;
+
+    --border: 39 15% 80%;
+    --input: 39 15% 80%;
+    --ring: 32 70% 40%;
+
+    --radius: 0.25rem;
+
+    /* Brand-specific — "paper" now means primary text color (ink), "ink" means inverse */
+    --amber: 32 70% 40%;
+    --amber-soft: 28 65% 35%;
+    --paper: 0 0% 8%;
+    --ink: 39 33% 96%;
+    --hairline: 39 15% 75%;
+
+    --gradient-amber: linear-gradient(135deg, hsl(32 75% 45%), hsl(28 65% 35%));
+    --gradient-fade: linear-gradient(180deg, hsl(39 33% 96% / 0), hsl(39 33% 96%));
+    --shadow-card: 0 20px 50px -20px hsl(32 30% 25% / 0.22);
+    --shadow-amber: 0 10px 40px -10px hsl(32 70% 40% / 0.35);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "ss01", "ss02";
+  }
+  h1, h2, h3, h4, h5 {
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer components {
+  .font-display { font-family: 'Playfair Display', Georgia, serif; }
+  .font-body { font-family: 'DM Sans', system-ui, sans-serif; }
+
+  .hairline {
+    border-top: 1px solid hsl(var(--hairline));
+  }
+  .text-amber { color: hsl(var(--amber)); }
+  .bg-amber { background-color: hsl(var(--amber)); }
+
+  .pill {
+    @apply inline-flex items-center text-[11px] uppercase tracking-[0.14em] px-2.5 py-1 rounded-full border border-border text-muted-foreground;
+  }
+  .pill-amber {
+    @apply inline-flex items-center text-[11px] uppercase tracking-[0.14em] px-2.5 py-1 rounded-full;
+    background: hsl(var(--amber) / 0.12);
+    color: hsl(var(--amber-soft));
+    border: 1px solid hsl(var(--amber) / 0.35);
+  }
+}
+
+@keyframes pulse-amber {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--amber) / 0.5); }
+  50% { box-shadow: 0 0 0 8px hsl(var(--amber) / 0); }
+}
+.animate-pulse-amber { animation: pulse-amber 2s ease-in-out infinite; }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up { animation: fade-up 0.5s ease-out both; }
