@@ -11,8 +11,9 @@ const config: Config = {
       colors: {
         ink: "var(--ink)",
         moss: "var(--moss)",
+        deep: "var(--deep)",
         signal: "var(--signal)",
-        mist: "var(--mist)",
+        mint: "var(--mint)",
         bone: "var(--bone)",
         paper: "var(--paper)",
         rust: "var(--rust)",
