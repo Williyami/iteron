@@ -10,6 +10,7 @@ const Index     = lazy(() => import("./pages/Index.tsx"));
 const Browse    = lazy(() => import("./pages/Browse.tsx"));
 const Dashboard = lazy(() => import("./pages/Dashboard.tsx"));
 const About     = lazy(() => import("./pages/About.tsx"));
+const NovaWear  = lazy(() => import("./pages/NovaWear.tsx"));
 const NotFound  = lazy(() => import("./pages/NotFound.tsx"));
 
 const queryClient = new QueryClient({
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/"          element={<Index />} />
             <Route path="/browse"    element={<Browse />} />
             <Route path="/about"     element={<About />} />
+            <Route path="/novawear"  element={<NovaWear />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="*"          element={<NotFound />} />
           </Routes>

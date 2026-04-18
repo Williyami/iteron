@@ -97,9 +97,11 @@ function NumberInput({
 }
 
 export function SettingsPanel() {
-  const mode    = useStore((s) => s.mode);
-  const setMode = useStore((s) => s.setMode);
-  const reset   = useStore((s) => s.reset);
+  const mode        = useStore((s) => s.mode);
+  const setMode     = useStore((s) => s.setMode);
+  const demoSite    = useStore((s) => s.demoSite);
+  const setDemoSite = useStore((s) => s.setDemoSite);
+  const reset       = useStore((s) => s.reset);
 
   const [confirmBeforeApply, setConfirmBeforeApply] = useState(false);
   const [autoScale,          setAutoScale]          = useState(true);
@@ -191,6 +193,29 @@ export function SettingsPanel() {
                 }}
               >
                 {m}
+              </button>
+            ))}
+          </div>
+        </SettingRow>
+        <SettingRow
+          label="Demo site"
+          description="The storefront shown in the preview iframe. Switching sites resets segments and presets."
+        >
+          <div className="flex items-center gap-2">
+            {(["pageturn", "novawear"] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => setDemoSite(s)}
+                className="text-[11px] font-mono uppercase px-3 py-1.5 rounded-lg transition-all"
+                style={{
+                  background: demoSite === s ? "var(--signal)" : "var(--surface-2)",
+                  color: demoSite === s ? "white" : "var(--ink-muted)",
+                  border: `1px solid ${demoSite === s ? "var(--signal)" : "var(--border)"}`,
+                  fontWeight: demoSite === s ? 700 : 400,
+                  letterSpacing: "0.06em",
+                }}
+              >
+                {s}
               </button>
             ))}
           </div>

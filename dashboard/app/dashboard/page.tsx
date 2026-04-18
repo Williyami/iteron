@@ -50,6 +50,7 @@ export default function DashboardPage() {
   const applyEvent = useStore((s) => s.applyEvent);
   const reset      = useStore((s) => s.reset);
   const mode       = useStore((s) => s.mode);
+  const demoSite   = useStore((s) => s.demoSite);
   const runStatus  = useStore((s) => s.run.status);
 
   const cancelRef = useRef<(() => void) | null>(null);
@@ -66,13 +67,13 @@ export default function DashboardPage() {
       if (mode === "live") {
         cancelRef.current = openSseStream(trimmed, {
           onEvent: (ev) => applyEvent(ev),
-          onFallback: () => { cancelRef.current = runDemoLoop(trimmed, applyEvent); },
+          onFallback: () => { cancelRef.current = runDemoLoop(trimmed, demoSite, applyEvent); },
         });
       } else {
-        cancelRef.current = runDemoLoop(trimmed, applyEvent);
+        cancelRef.current = runDemoLoop(trimmed, demoSite, applyEvent);
       }
     },
-    [applyEvent, mode, startRun, stopCurrent]
+    [applyEvent, demoSite, mode, startRun, stopCurrent]
   );
 
   const handleReset = useCallback(() => { stopCurrent(); reset(); }, [reset, stopCurrent]);

@@ -26,7 +26,9 @@
       "Bash(sips --getProperty pixelWidth --getProperty pixelHeight /Users/williameklund/iteron/dashboard/public/iteron-i.png)",
       "Bash(sips -c 280 280 /Users/williameklund/iteron/dashboard/public/iteron-i.png --out /Users/williameklund/iteron/dashboard/public/iteron-favicon.png)",
       "Bash(sips -c 280 280 /Users/williameklund/iteron/demo/public/iteron-i.png --out /Users/williameklund/iteron/demo/public/iteron-favicon.png)",
-      "Bash(sips --cropOffset 180 150 -c 200 200 /Users/williameklund/iteron/demo/public/iteron-i.png --out /Users/williameklund/iteron/demo/public/iteron-i-body.png)"
+      "Bash(sips --cropOffset 180 150 -c 200 200 /Users/williameklund/iteron/demo/public/iteron-i.png --out /Users/williameklund/iteron/demo/public/iteron-i-body.png)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }

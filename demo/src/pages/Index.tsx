@@ -5,7 +5,7 @@ import { CategoryBar } from "@/components/CategoryBar";
 import { BookCarousel } from "@/components/BookCarousel";
 import { BookCard } from "@/components/BookCard";
 import { BookCover } from "@/components/BookCover";
-import { IteronHud } from "@/components/IteronHud";
+import { IrisHud } from "@/components/IrisHud";
 import { books, genres } from "@/lib/books";
 import type { Genre } from "@/lib/books";
 
@@ -213,7 +213,7 @@ const Index = () => {
         </div>
       </footer>
 
-      <IteronHud />
+      <IrisHud site="pageturn" />
     </div>
   );
 };

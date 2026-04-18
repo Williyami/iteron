@@ -1,6 +1,7 @@
 export type NodeId = "fetch" | "diagnose" | "generate" | "ab" | "measure";
 export type NodeState = "idle" | "active" | "complete" | "error";
-export type Segment = "Mystery" | "Romance" | "Sci-Fi";
+export type Segment = string;
+export type DemoSite = "pageturn" | "novawear";
 export type Agent = "analyst" | "optimizer";
 
 export interface PipelineNode {

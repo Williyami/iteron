@@ -1,15 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useStore } from "@/lib/store";
 import { ApplyingOverlay } from "./ApplyingOverlay";
 
-const PAGETURN_URL = "http://localhost:8080";
+const BASE_URL = "http://localhost:8080";
+
+const SITE_LABELS: Record<string, string> = {
+  pageturn: "localhost:8080",
+  novawear: "localhost:8080/novawear",
+};
 
 export function StorePreview() {
   const [loaded, setLoaded] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
-  const running = useStore((s) => s.run.status === "running");
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const running     = useStore((s) => s.run.status === "running");
+  const runStatus   = useStore((s) => s.run.status);
+  const demoSite    = useStore((s) => s.demoSite);
+  const appliedConfig = useStore((s) => s.appliedConfig);
+
+  const iframeUrl = demoSite === "novawear" ? `${BASE_URL}/novawear` : BASE_URL;
+  const siteLabel = SITE_LABELS[demoSite] ?? "localhost:8080";
+
+  const prevStatusRef = useRef(runStatus);
+  useEffect(() => {
+    if (
+      prevStatusRef.current === "running" &&
+      runStatus === "complete" &&
+      demoSite === "novawear" &&
+      appliedConfig?.configJson
+    ) {
+      iframeRef.current?.contentWindow?.postMessage(
+        { type: "iteron:config", payload: appliedConfig.configJson },
+        BASE_URL
+      );
+    }
+    prevStatusRef.current = runStatus;
+  }, [runStatus, appliedConfig, demoSite]);
 
   const handleReload = () => {
     setLoaded(false);
@@ -29,7 +58,7 @@ export function StorePreview() {
           className="font-mono text-[10px] uppercase truncate"
           style={{ color: "var(--ink-faint)", letterSpacing: "0.22em" }}
         >
-          iframe · localhost:8080
+          iframe · {siteLabel}
         </span>
         <div className="flex items-center gap-3 shrink-0">
           <span
@@ -79,7 +108,7 @@ export function StorePreview() {
             Reload
           </button>
           <a
-            href={PAGETURN_URL}
+            href={iframeUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="group inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-md transition-colors"
@@ -96,7 +125,7 @@ export function StorePreview() {
               e.currentTarget.style.color = "var(--ink-muted)";
               e.currentTarget.style.borderColor = "var(--border)";
             }}
-            aria-label="Open PageTurn in new tab"
+            aria-label="Open store in new tab"
           >
             Open store
             <svg
@@ -120,10 +149,11 @@ export function StorePreview() {
       </div>
       <div className="relative w-full" style={{ height: "calc(100% - 37px)" }}>
         <iframe
-          key={reloadKey}
-          src={PAGETURN_URL}
+          key={`${reloadKey}-${demoSite}`}
+          ref={iframeRef}
+          src={iframeUrl}
           onLoad={() => setLoaded(true)}
-          title="PageTurn store"
+          title={demoSite === "novawear" ? "NovaWear store" : "PageTurn store"}
           className="absolute inset-0 w-full h-full border-0"
           style={{ background: "var(--bone)" }}
         />

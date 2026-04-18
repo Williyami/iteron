@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import clsx from "clsx";
-import { GOAL_PRESETS } from "@/lib/constants";
+import { PRESETS_BY_SITE } from "@/lib/constants";
 import { useStore } from "@/lib/store";
 
 interface Props {
@@ -11,10 +11,15 @@ interface Props {
 }
 
 export function GoalBar({ onStart, onReset }: Props) {
-  const [value, setValue] = useState("Improve CTR across all segments");
-  const [prompt, setPrompt] = useState("");
-  const running = useStore((s) => s.run.status === "running");
+  const running        = useStore((s) => s.run.status === "running");
+  const demoSite       = useStore((s) => s.demoSite);
   const setHistoryOpen = useStore((s) => s.setHistoryOpen);
+
+  const presets = PRESETS_BY_SITE[demoSite];
+  const [value, setValue]   = useState(presets[0]);
+  const [prompt, setPrompt] = useState("");
+
+  useEffect(() => { setValue(presets[0]); }, [demoSite, presets]);
 
   const handleChip = (preset: string) => {
     setValue(preset);
@@ -85,7 +90,7 @@ export function GoalBar({ onStart, onReset }: Props) {
             >
               Presets
             </span>
-            {GOAL_PRESETS.map((preset) => (
+            {presets.map((preset: string) => (
               <button
                 key={preset}
                 type="button"

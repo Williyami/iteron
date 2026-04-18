@@ -3,25 +3,26 @@ import { createJSONStorage, persist, subscribeWithSelector } from "zustand/middl
 import type {
   AbResult,
   AppliedConfigState,
+  DemoSite,
   PipelineNode,
   RunEvent,
   RunRow,
-  Segment,
   SegmentState,
   Thought,
   TickerEvent,
 } from "./types";
-import { INITIAL_SEGMENT_CTR, PIPELINE_NODES } from "./constants";
+import { INITIAL_CTR_BY_SITE, PIPELINE_NODES } from "./constants";
 
 type Mode = "demo" | "live";
 type RunStatus = "idle" | "running" | "complete" | "failed";
 
 interface DashboardState {
   mode: Mode;
+  demoSite: DemoSite;
   run: { status: RunStatus; goal: string; startedAt: number | null };
   pipeline: { nodes: PipelineNode[] };
   thoughts: Thought[];
-  segments: Record<Segment, SegmentState>;
+  segments: Record<string, SegmentState>;
   latestAb: AbResult | null;
   appliedConfig: AppliedConfigState | null;
   history: RunRow[];
@@ -32,6 +33,7 @@ interface DashboardState {
   applyEvent: (event: RunEvent) => void;
   reset: () => void;
   setMode: (mode: Mode) => void;
+  setDemoSite: (site: DemoSite) => void;
   setHistory: (rows: RunRow[]) => void;
   setTickerSeed: (events: TickerEvent[]) => void;
   pushTickerEvent: (event: TickerEvent) => void;
@@ -41,11 +43,13 @@ interface DashboardState {
 const freshPipeline = (): PipelineNode[] =>
   PIPELINE_NODES.map((n) => ({ ...n, state: "idle" }));
 
-const freshSegments = (): Record<Segment, SegmentState> => ({
-  Mystery: { ctr: INITIAL_SEGMENT_CTR.Mystery, lastUpdated: 0 },
-  Romance: { ctr: INITIAL_SEGMENT_CTR.Romance, lastUpdated: 0 },
-  "Sci-Fi": { ctr: INITIAL_SEGMENT_CTR["Sci-Fi"], lastUpdated: 0 },
-});
+const freshSegments = (site: DemoSite = "pageturn"): Record<string, SegmentState> =>
+  Object.fromEntries(
+    Object.entries(INITIAL_CTR_BY_SITE[site]).map(([seg, ctr]) => [
+      seg,
+      { ctr, lastUpdated: 0 },
+    ])
+  );
 
 let thoughtSeq = 0;
 const nextThoughtId = () => `t-${Date.now()}-${++thoughtSeq}`;
@@ -65,10 +69,11 @@ export const useStore = create<DashboardState>()(
     persist(
       (set) => ({
     mode: "demo",
+    demoSite: "pageturn",
     run: { status: "idle", goal: "", startedAt: null },
     pipeline: { nodes: freshPipeline() },
     thoughts: [],
-    segments: freshSegments(),
+    segments: freshSegments("pageturn"),
     latestAb: null,
     appliedConfig: null,
     history: [],
@@ -175,7 +180,21 @@ export const useStore = create<DashboardState>()(
       }),
 
     reset: () =>
+      set((state) => ({
+        run: { status: "idle", goal: "", startedAt: null },
+        pipeline: { nodes: freshPipeline() },
+        thoughts: [],
+        latestAb: null,
+        appliedConfig: null,
+        segments: freshSegments(state.demoSite),
+      })),
+
+    setMode: (mode) => set({ mode }),
+
+    setDemoSite: (demoSite) =>
       set(() => ({
+        demoSite,
+        segments: freshSegments(demoSite),
         run: { status: "idle", goal: "", startedAt: null },
         pipeline: { nodes: freshPipeline() },
         thoughts: [],
@@ -183,7 +202,6 @@ export const useStore = create<DashboardState>()(
         appliedConfig: null,
       })),
 
-    setMode: (mode) => set({ mode }),
     setHistory: (rows) =>
       set((state) => ({ history: mergeHistory(rows, state.history) })),
     setTickerSeed: (tickerEvents) => set({ tickerEvents }),
@@ -195,10 +213,11 @@ export const useStore = create<DashboardState>()(
       }),
       {
         name: "iteron-dashboard",
-        version: 1,
+        version: 2,
         storage: createJSONStorage(() => localStorage),
         partialize: (state) => ({
           mode: state.mode,
+          demoSite: state.demoSite,
           history: state.history,
           segments: state.segments,
           latestAb: state.latestAb,

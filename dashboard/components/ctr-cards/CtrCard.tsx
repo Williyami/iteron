@@ -3,8 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, animate, useTransform } from "framer-motion";
 import { useStore } from "@/lib/store";
-import type { Segment } from "@/lib/types";
-
 function ctrStatus(ctr: number): "bad" | "mid" | "good" {
   if (ctr < 0.015) return "bad";
   if (ctr < 0.03) return "mid";
@@ -18,7 +16,7 @@ const STATUS_COLOR = {
 } as const;
 
 interface Props {
-  segment: Segment;
+  segment: string;
 }
 
 export function CtrCard({ segment }: Props) {

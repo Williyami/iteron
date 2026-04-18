@@ -1,9 +1,11 @@
 "use client";
 
-import { SEGMENTS } from "@/lib/constants";
+import { useStore } from "@/lib/store";
 import { CtrCard } from "./CtrCard";
 
 export function CtrCardGrid() {
+  const segments = useStore((s) => Object.keys(s.segments));
+
   return (
     <div
       className="flex flex-col bg-paper"
@@ -27,7 +29,7 @@ export function CtrCardGrid() {
         </span>
       </div>
       <div className="flex flex-col">
-        {SEGMENTS.map((s) => (
+        {segments.map((s) => (
           <CtrCard key={s} segment={s} />
         ))}
       </div>
