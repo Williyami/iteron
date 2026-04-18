@@ -107,7 +107,7 @@ export function SettingsPanel() {
   const [autoScale,          setAutoScale]          = useState(true);
   const [emailAlerts,        setEmailAlerts]        = useState(false);
   const [slackAlerts,        setSlackAlerts]        = useState(false);
-  const [showJarvis,         setShowJarvis]         = useState(true);
+  const [showIris,           setShowIris]           = useState(true);
   const [debugMode,          setDebugMode]          = useState(false);
   const [minSample,          setMinSample]          = useState("200");
   const [confidence,         setConfidence]         = useState("95");
@@ -253,10 +253,10 @@ export function SettingsPanel() {
           <Toggle checked={slackAlerts} onChange={setSlackAlerts} />
         </SettingRow>
         <SettingRow
-          label="Show Jarvis HUD overlay during runs"
+          label="Show Iris HUD overlay during runs"
           description="Full-screen scanning animation over the store preview while agents are active."
         >
-          <Toggle checked={showJarvis} onChange={setShowJarvis} />
+          <Toggle checked={showIris} onChange={setShowIris} />
         </SettingRow>
       </SectionCard>
 

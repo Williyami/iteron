@@ -1,5 +1,5 @@
 import { Header } from "@/components/Header";
-import { IteronHud } from "@/components/IteronHud";
+import { IrisHud } from "@/components/IrisHud";
 
 const About = () => (
   <div className="min-h-screen bg-background">
@@ -15,7 +15,7 @@ const About = () => (
         and quietly retunes the shelves — no human in the loop.
       </p>
     </main>
-    <IteronHud />
+    <IrisHud site="pageturn" />
   </div>
 );
 

@@ -75,8 +75,8 @@ const IrisOverlay = ({
     if (isScanning)  targets = fallback;
     if (isTargeting) targets = fallback.slice(0, 2);
     const color = isScanning ? "#2563eb" : "#7c3aed";
-    targets.forEach((el) => { el.classList.add("jarvis-highlight"); el.style.setProperty("--jarvis-color", color); });
-    return () => { targets.forEach((el) => { el.classList.remove("jarvis-highlight"); el.style.removeProperty("--jarvis-color"); }); };
+    targets.forEach((el) => { el.classList.add("iris-highlight"); el.style.setProperty("--iris-color", color); });
+    return () => { targets.forEach((el) => { el.classList.remove("iris-highlight"); el.style.removeProperty("--iris-color"); }); };
   }, [running, steps]);
 
   if (!running) return null;
@@ -86,7 +86,7 @@ const IrisOverlay = ({
         position: "absolute", left: 0, right: 0, height: 2,
         background: "linear-gradient(90deg, transparent 0%, #2563eb 30%, #2563eb 70%, transparent 100%)",
         boxShadow: "0 0 20px 4px rgba(37,99,235,0.4)",
-        animation: "jarvis-scan 4s ease-in-out infinite",
+        animation: "iris-scan 4s ease-in-out infinite",
       }} />
       <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} viewBox="0 0 1920 1080" preserveAspectRatio="none">
         <path d="M40 80 L40 40 L80 40"             fill="none" stroke="#2563eb" strokeWidth="1.5" opacity="0.45" />
@@ -101,7 +101,7 @@ const IrisOverlay = ({
         padding: "10px 16px", maxWidth: 340,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-          <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#34d399", animation: "jarvis-pulse 1s infinite" }} />
+          <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#34d399", animation: "iris-pulse 1s infinite" }} />
           <span style={{ fontSize: 11, fontWeight: 700, color: "#60a5fa", textTransform: "uppercase", letterSpacing: "0.1em", fontFamily: "'JetBrains Mono', monospace" }}>
             IRIS — ACTIVE
           </span>

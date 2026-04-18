@@ -100,27 +100,27 @@
   }
 }
 
-/* ── Jarvis HUD ──────────────────────────────────────────── */
-@keyframes jarvis-scan {
+/* ── Iris HUD ────────────────────────────────────────────── */
+@keyframes iris-scan {
   0%   { top: 8%; opacity: 0; }
   8%   { opacity: 1; }
   92%  { opacity: 1; }
   100% { top: 92%; opacity: 0; }
 }
-@keyframes jarvis-pulse {
+@keyframes iris-pulse {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.3; }
 }
-@keyframes jarvis-fadein {
+@keyframes iris-fadein {
   from { opacity: 0; transform: translateY(-4px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-@keyframes jarvis-highlight-pulse {
-  0%, 100% { box-shadow: 0 0 0 2px var(--jarvis-color, #059669), 0 0 12px 2px var(--jarvis-color, #059669); }
-  50%       { box-shadow: 0 0 0 2px var(--jarvis-color, #059669), 0 0 24px 6px var(--jarvis-color, #059669); }
+@keyframes iris-highlight-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px var(--iris-color, #059669), 0 0 12px 2px var(--iris-color, #059669); }
+  50%       { box-shadow: 0 0 0 2px var(--iris-color, #059669), 0 0 24px 6px var(--iris-color, #059669); }
 }
-.jarvis-highlight {
-  animation: jarvis-highlight-pulse 1.5s ease-in-out infinite !important;
+.iris-highlight {
+  animation: iris-highlight-pulse 1.5s ease-in-out infinite !important;
   position: relative;
   z-index: 10;
 }

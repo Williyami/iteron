@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { SlidersHorizontal, Sparkles } from "lucide-react";
 import { Header } from "@/components/Header";
 import { CategoryBar } from "@/components/CategoryBar";
-import { IteronHud } from "@/components/IteronHud";
+import { IrisHud } from "@/components/IrisHud";
 import { BookCard } from "@/components/BookCard";
 import { books, genres, Genre } from "@/lib/books";
 import { supabase } from "@/integrations/supabase/client";
@@ -157,7 +157,7 @@ const Browse = () => {
         </div>
       </footer>
 
-      <IteronHud />
+      <IrisHud site="pageturn" />
     </div>
   );
 };

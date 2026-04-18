@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Header } from "@/components/Header";
-import { IteronHud } from "@/components/IteronHud";
+import { IrisHud } from "@/components/IrisHud";
 
 // ── types ───────────────────────────────────────────────────────────────────
 type Tab = "home" | "history" | "analytics" | "settings";
@@ -491,7 +491,7 @@ const SettingsView = () => {
   const [autoScale, setAutoScale]                   = useState(true);
   const [emailAlerts, setEmailAlerts]               = useState(false);
   const [slackAlerts, setSlackAlerts]               = useState(false);
-  const [liveJarvis, setLiveJarvis]                 = useState(true);
+  const [liveIris, setLiveIris]                     = useState(true);
   const [debugMode, setDebugMode]                   = useState(false);
   const [minSampleSize, setMinSampleSize]           = useState("200");
   const [confidenceLevel, setConfidenceLevel]       = useState("95");
@@ -627,10 +627,10 @@ const SettingsView = () => {
 
           <SettingRow
             icon={Eye}
-            label="Show Jarvis HUD overlay during runs"
-            description="Display the full-screen scanning animation and book-card highlights while the Iteron widget is running. Disable for a quieter experience."
+            label="Show Iris HUD overlay during runs"
+            description="Display the full-screen scanning animation and book-card highlights while the Iris widget is running. Disable for a quieter experience."
           >
-            <Toggle checked={liveJarvis} onChange={setLiveJarvis} />
+            <Toggle checked={liveIris} onChange={setLiveIris} />
           </SettingRow>
         </div>
       </div>
@@ -843,7 +843,7 @@ const Dashboard = () => {
         </main>
       </div>
 
-      <IteronHud />
+      <IrisHud site="pageturn" />
     </div>
   );
 };
