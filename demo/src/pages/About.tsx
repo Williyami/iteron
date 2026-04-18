@@ -1,19 +1,21 @@
 import { Header } from "@/components/Header";
+import { IteronHud } from "@/components/IteronHud";
 
 const About = () => (
-  <div className="min-h-screen bg-background text-foreground">
+  <div className="min-h-screen bg-background">
     <Header />
-    <main className="max-w-[1280px] mx-auto px-6 md:px-10 py-24">
-      <div className="text-[11px] uppercase tracking-[0.3em] text-amber mb-6">Colophon</div>
-      <h1 className="font-display text-5xl md:text-7xl text-paper leading-[1.02] max-w-3xl">
-        A bookshop that <span className="italic text-amber-soft">reads you back.</span>
+    <main className="container py-20">
+      <div className="text-xs font-semibold uppercase tracking-widest text-primary mb-4">About</div>
+      <h1 className="font-display text-4xl md:text-6xl font-bold leading-tight max-w-3xl">
+        A bookshop that reads you back.
       </h1>
-      <p className="mt-8 text-lg text-muted-foreground max-w-2xl leading-relaxed">
-        PageTurn is a small editorial experiment: a curated shelf of fiction, a
-        soft layer of intelligence, and the belief that recommending a book is
-        still a craft worth taking seriously.
+      <p className="mt-6 text-lg text-muted-foreground max-w-2xl leading-relaxed">
+        PageTurn is a curated fiction catalogue with a soft layer of intelligence
+        underneath. Iteron AI watches engagement, identifies what isn't working,
+        and quietly retunes the shelves — no human in the loop.
       </p>
     </main>
+    <IteronHud />
   </div>
 );
 

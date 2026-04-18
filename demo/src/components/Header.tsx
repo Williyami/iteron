@@ -1,34 +1,65 @@
+import { Search, ShoppingCart, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export const Header = () => {
   const { pathname } = useLocation();
-  const NavItem = ({ to, label }: { to: string; label: string }) => (
-    <Link
-      to={to}
-      className={`text-[12px] uppercase tracking-[0.22em] transition-colors ${
-        pathname === to ? "text-paper" : "text-muted-foreground hover:text-paper"
-      }`}
-    >
-      {label}
-    </Link>
-  );
 
   return (
-    <header className="sticky top-0 z-40 backdrop-blur-md bg-background/75 border-b border-hairline/60">
-      <div className="max-w-[1280px] mx-auto px-6 md:px-10 h-16 flex items-center justify-between">
-        <Link to="/browse" className="flex items-baseline gap-2">
-          <span className="font-display text-2xl text-paper tracking-tight">PageTurn</span>
-          <span className="text-amber text-xs tracking-[0.3em] uppercase">·</span>
-          <span className="hidden sm:inline text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-            Editorial bookshop
-          </span>
+    <nav className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-lg">
+      <div className="container flex h-14 items-center gap-6">
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2 text-foreground flex-shrink-0">
+          <BrandLogo variant="full" className="h-9" />
         </Link>
-        <nav className="flex items-center gap-7">
-          <NavItem to="/browse" label="Browse" />
-          <NavItem to="/about" label="About" />
-          <NavItem to="/dashboard" label="Dashboard" />
-        </nav>
+
+        {/* Search */}
+        <div className="flex-1 max-w-xl hidden sm:block">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search books, authors, genres..."
+              className="w-full rounded-lg bg-secondary border border-border pl-9 pr-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/50"
+            />
+          </div>
+        </div>
+
+        {/* Nav links */}
+        <div className="flex items-center gap-4 ml-auto">
+          <Link
+            to="/"
+            className={`text-sm font-medium transition-colors hover:text-foreground ${
+              pathname === "/" ? "text-foreground" : "text-muted-foreground"
+            }`}
+          >
+            Home
+          </Link>
+          <Link
+            to="/browse"
+            className={`text-sm font-medium transition-colors hover:text-foreground ${
+              pathname === "/browse" ? "text-foreground" : "text-muted-foreground"
+            }`}
+          >
+            Browse
+          </Link>
+          <Link
+            to="/dashboard"
+            className={`text-sm font-medium transition-colors hover:text-foreground ${
+              pathname === "/dashboard" ? "text-foreground" : "text-muted-foreground"
+            }`}
+          >
+            Dashboard
+          </Link>
+          <button className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground relative">
+            <ShoppingCart className="h-5 w-5" />
+            <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">0</span>
+          </button>
+          <button className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
+            <User className="h-5 w-5" />
+          </button>
+        </div>
       </div>
-    </header>
+    </nav>
   );
 };

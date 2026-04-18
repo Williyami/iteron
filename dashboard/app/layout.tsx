@@ -10,6 +10,11 @@ const geistMono = GeistMono;
 export const metadata: Metadata = {
   title: "Iteron AI — autonomous personalization middleware",
   description: "The store that improves itself while you sleep. Analyst + Optimizer agents ship lifts in a 25-second loop.",
+  icons: {
+    icon: "/iteron-i.png",
+    apple: "/iteron-i.png",
+    shortcut: "/iteron-i.png",
+  },
 };
 
 export default function RootLayout({

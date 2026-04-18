@@ -13,18 +13,28 @@ export default {
       },
     },
     extend: {
-      fontFamily: {
-        display: ['"Playfair Display"', 'Georgia', 'serif'],
-        body: ['"DM Sans"', 'system-ui', 'sans-serif'],
+            fontFamily: {
+        display: ['Jost', 'sans-serif'],
+        body:    ['Jost', 'sans-serif'],
+        mono:    ['"JetBrains Mono"', '"SF Mono"', 'monospace'],
       },
       colors: {
+        /* legacy tokens */
         amber: {
-          DEFAULT: "hsl(var(--amber))",
+          DEFAULT: "hsl(var(--primary))",
           soft: "hsl(var(--amber-soft))",
         },
         paper: "hsl(var(--paper))",
         ink: "hsl(var(--ink))",
         hairline: "hsl(var(--hairline))",
+        /* genre colours */
+        "genre-mystery":    "hsl(var(--genre-mystery))",
+        "genre-romance":    "hsl(var(--genre-romance))",
+        "genre-scifi":      "hsl(var(--genre-scifi))",
+        "genre-fantasy":    "hsl(var(--genre-fantasy))",
+        "genre-thriller":   "hsl(var(--genre-thriller))",
+        "genre-historical": "hsl(var(--genre-historical))",
+        "surface-hover":    "hsl(var(--surface-hover))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

@@ -1,9 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { SlidersHorizontal, Sparkles } from "lucide-react";
 import { Header } from "@/components/Header";
+import { CategoryBar } from "@/components/CategoryBar";
 import { IteronHud } from "@/components/IteronHud";
 import { BookCard } from "@/components/BookCard";
-import { BOOKS, GENRES, Genre, Book } from "@/lib/books";
+import { books, genres, Genre } from "@/lib/books";
 import { supabase } from "@/integrations/supabase/client";
+
+type SortOption = "popular" | "rating" | "price-low" | "price-high" | "newest";
 
 type MysteryConfig = {
   tags?: string[];
@@ -11,7 +16,15 @@ type MysteryConfig = {
 };
 
 const Browse = () => {
-  const [genre, setGenre] = useState<Genre>("All");
+  const [searchParams] = useSearchParams();
+  const genreParam = searchParams.get("genre");
+  const initialGenre: Genre | "All" =
+    genreParam && (genres as readonly string[]).includes(genreParam)
+      ? (genreParam as Genre)
+      : "All";
+
+  const [activeGenre, setActiveGenre] = useState<Genre | "All">(initialGenre);
+  const [sort, setSort] = useState<SortOption>("popular");
   const [mysteryConfig, setMysteryConfig] = useState<MysteryConfig | null>(null);
 
   const fetchConfig = async () => {
@@ -24,162 +37,124 @@ const Browse = () => {
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
-    if (error) {
-      console.warn("ui_config fetch error", error);
-      return;
-    }
-    if (data?.config_json) {
+    if (!error && data?.config_json) {
       setMysteryConfig(data.config_json as MysteryConfig);
     }
   };
 
   useEffect(() => {
     fetchConfig();
+    const interval = setInterval(fetchConfig, 5000);
     const onComplete = () => fetchConfig();
     const onReset = () => setMysteryConfig(null);
     window.addEventListener("iteron-loop-complete", onComplete);
     window.addEventListener("iteron-reset", onReset);
     return () => {
+      clearInterval(interval);
       window.removeEventListener("iteron-loop-complete", onComplete);
       window.removeEventListener("iteron-reset", onReset);
     };
   }, []);
 
-  // Apply config: reorder mystery + tag overrides
-  const mysteryBooks = useMemo(() => {
-    const mys = BOOKS.filter((b) => b.genre === "Mystery");
-    if (mysteryConfig?.sort_order?.length) {
+  const hasAiConfig = !!(mysteryConfig?.tags?.length);
+
+  const filtered = useMemo(() => {
+    let list = activeGenre === "All" ? books : books.filter((b) => b.genre === activeGenre);
+
+    // apply mystery sort order from Supabase config
+    if (activeGenre === "Mystery" && mysteryConfig?.sort_order?.length) {
       const order = mysteryConfig.sort_order;
-      return [...mys].sort((a, b) => {
+      list = [...list].sort((a, b) => {
         const ai = order.indexOf(a.id);
         const bi = order.indexOf(b.id);
         return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
       });
+      return list;
     }
-    return mys;
-  }, [mysteryConfig]);
 
-  const otherBooks = BOOKS.filter((b) => b.genre !== "Mystery");
-
-  const filtered = (list: Book[]) =>
-    genre === "All" ? list : list.filter((b) => b.genre === genre);
-
-  const showMysterySection = genre === "All" || genre === "Mystery";
+    return [...list].sort((a, b) => {
+      switch (sort) {
+        case "rating":     return b.rating - a.rating;
+        case "price-low":  return a.price - b.price;
+        case "price-high": return b.price - a.price;
+        case "newest":     return (b.newRelease ? 1 : 0) - (a.newRelease ? 1 : 0);
+        default:           return b.reviewCount - a.reviewCount;
+      }
+    });
+  }, [activeGenre, sort, mysteryConfig]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background">
       <Header />
+      <CategoryBar activeGenre={activeGenre} onSelect={setActiveGenre} />
 
-      {/* Hero */}
-      <section className="max-w-[1280px] mx-auto px-6 md:px-10 pt-20 pb-14 md:pt-28 md:pb-20">
-        <div className="text-[11px] uppercase tracking-[0.3em] text-amber mb-6">
-          Issue 04 · Spring Selection
+      <div className="container py-8">
+        {/* Page header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl font-bold font-display">
+              {activeGenre === "All" ? "All Books" : activeGenre}
+            </h1>
+            <p className="text-sm text-muted-foreground">{filtered.length} results</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value as SortOption)}
+              className="bg-secondary border border-border rounded-lg px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary/50"
+            >
+              <option value="popular">Most Popular</option>
+              <option value="rating">Highest Rated</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="newest">Newest First</option>
+            </select>
+          </div>
         </div>
-        <h1 className="font-display text-[44px] md:text-7xl leading-[1.02] text-paper max-w-4xl">
-          Discover your<br />
-          <span className="italic text-amber-soft">next obsession.</span>
-        </h1>
-        <p className="mt-6 text-base md:text-lg text-muted-foreground max-w-xl leading-relaxed">
-          A small, opinionated catalogue of fiction — handpicked, occasionally
-          tuned by an algorithm that's read more than it should have.
-        </p>
-      </section>
 
-      {/* Personalized banner */}
-      {mysteryConfig?.tags?.length ? (
-        <section className="max-w-[1280px] mx-auto px-6 md:px-10 pb-10 animate-fade-up">
-          <div className="border border-amber/30 bg-amber/[0.04] rounded-sm px-6 py-5 flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
-            <div>
-              <div className="text-[10px] uppercase tracking-[0.3em] text-amber mb-1.5">
-                ⚡ Personalized for you
+        {/* AI optimisation banner */}
+        {hasAiConfig && (activeGenre === "All" || activeGenre === "Mystery") && (
+          <div className="mb-8 p-5 rounded-xl border-2 border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent animate-fade-up">
+            <div className="flex items-start gap-3">
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/20 shrink-0 mt-0.5">
+                <Sparkles className="h-4 w-4 text-primary" />
               </div>
-              <div className="font-display text-xl text-paper">
-                We've retuned the Mystery shelf based on your taste.
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-sm font-bold text-primary uppercase tracking-wider">Personalized for you</span>
+                </div>
+                <p className="text-xs text-muted-foreground">The Mystery shelf has been retuned by Iteron AI based on engagement signals.</p>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {mysteryConfig!.tags!.map((t) => (
+                    <span key={t} className="px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-semibold">{t}</span>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="flex flex-wrap gap-2 md:ml-auto">
-              {mysteryConfig.tags.map((t) => (
-                <span key={t} className="pill-amber">{t}</span>
-              ))}
             </div>
           </div>
-        </section>
-      ) : null}
+        )}
 
-      {/* Genre filter */}
-      <section className="max-w-[1280px] mx-auto px-6 md:px-10 pb-10">
-        <div className="hairline pt-6 flex flex-wrap items-center gap-x-7 gap-y-3">
-          <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mr-2">
-            Filter
-          </span>
-          {GENRES.map((g) => (
-            <button
-              key={g}
-              onClick={() => setGenre(g)}
-              className={`text-[12px] uppercase tracking-[0.22em] pb-1 border-b transition-colors ${
-                genre === g
-                  ? "text-paper border-amber"
-                  : "text-muted-foreground border-transparent hover:text-paper"
-              }`}
-            >
-              {g}
-            </button>
+        {/* Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 transition-all duration-500">
+          {filtered.map((book) => (
+            <BookCard
+              key={book.id}
+              book={book}
+              overrideTags={
+                (activeGenre === "All" || activeGenre === "Mystery") && hasAiConfig && book.genre === "Mystery"
+                  ? mysteryConfig?.tags
+                  : undefined
+              }
+            />
           ))}
         </div>
-      </section>
+      </div>
 
-      {/* Mystery section */}
-      {showMysterySection && (
-        <section className="max-w-[1280px] mx-auto px-6 md:px-10 pb-20">
-          <div className="flex items-end justify-between mb-10">
-            <div>
-              <div className="text-[10px] uppercase tracking-[0.3em] text-amber mb-2">
-                Section 01
-              </div>
-              <h2 className="font-display text-3xl md:text-5xl text-paper">Mystery</h2>
-            </div>
-            <div className="hidden md:block max-w-xs text-sm text-muted-foreground text-right">
-              Quiet rooms, long shadows, the wrong question asked at the right time.
-            </div>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-14">
-            {mysteryBooks.map((b) => (
-              <BookCard
-                key={b.id}
-                book={b}
-                overrideTags={mysteryConfig?.tags}
-              />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Other genres */}
-      {(["Romance", "Sci-Fi"] as const).map((sec, i) => {
-        const list = filtered(otherBooks.filter((b) => b.genre === sec));
-        if (list.length === 0) return null;
-        return (
-          <section key={sec} className="max-w-[1280px] mx-auto px-6 md:px-10 pb-20">
-            <div className="flex items-end justify-between mb-10">
-              <div>
-                <div className="text-[10px] uppercase tracking-[0.3em] text-amber mb-2">
-                  Section 0{i + 2}
-                </div>
-                <h2 className="font-display text-3xl md:text-5xl text-paper">{sec}</h2>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-14">
-              {list.map((b) => (
-                <BookCard key={b.id} book={b} />
-              ))}
-            </div>
-          </section>
-        );
-      })}
-
-      <footer className="max-w-[1280px] mx-auto px-6 md:px-10 py-12 hairline text-xs text-muted-foreground flex flex-wrap justify-between gap-4">
-        <div>© PageTurn — printed in pixels.</div>
-        <div className="tracking-[0.22em] uppercase">Vol. IV / MMXXVI</div>
+      <footer className="border-t border-border bg-card/50 py-8 mt-8">
+        <div className="container text-center text-xs text-muted-foreground">
+          © 2026 PageTurn. All rights reserved.
+        </div>
       </footer>
 
       <IteronHud />

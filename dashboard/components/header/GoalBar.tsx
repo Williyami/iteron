@@ -12,21 +12,29 @@ interface Props {
 
 export function GoalBar({ onStart, onReset }: Props) {
   const [value, setValue] = useState("Improve CTR across all segments");
+  const [prompt, setPrompt] = useState("");
   const running = useStore((s) => s.run.status === "running");
   const setHistoryOpen = useStore((s) => s.setHistoryOpen);
 
   const handleChip = (preset: string) => {
     setValue(preset);
-    if (!running) onStart(preset);
+  };
+
+  const handleStart = () => {
+    const goal = value.trim();
+    const customPrompt = prompt.trim();
+    const composed = customPrompt
+      ? `${goal || "Improve CTR across all segments"}\n\nAdditional prompt:\n${customPrompt}`
+      : goal;
+    onStart(composed);
   };
 
   return (
-    <section
-      className="bg-bone py-6"
-    >
-      <div className="page-shell">
-        <div className="surface-card p-5 flex items-end gap-6 flex-wrap">
-          <div className="flex-1 min-w-[320px]">
+    <section className="bg-bone py-6">
+      <div className="dashboard-shell">
+        <div className="surface-card p-5">
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+            <div className="min-w-0">
           <div
             className="text-[12px] mb-2"
             style={{ color: "var(--ink-faint)", fontWeight: 600 }}
@@ -37,7 +45,7 @@ export function GoalBar({ onStart, onReset }: Props) {
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && !running) onStart(value);
+              if (e.key === "Enter" && !running) handleStart();
             }}
             className="w-full bg-transparent text-ink focus:outline-none"
             style={{
@@ -50,6 +58,26 @@ export function GoalBar({ onStart, onReset }: Props) {
             placeholder="What should the loop optimize for?"
             aria-label="Optimization goal"
           />
+          <div className="mt-4">
+            <div
+              className="text-[12px] mb-2"
+              style={{ color: "var(--ink-faint)", fontWeight: 600 }}
+            >
+              Custom prompt
+            </div>
+            <textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              className="w-full resize-y rounded-xl bg-[var(--surface-2)] px-4 py-3 text-[14px] text-ink outline-none"
+              style={{
+                border: "1px solid var(--border)",
+                minHeight: "108px",
+                lineHeight: 1.6,
+              }}
+              placeholder="Add extra instructions for the agents, guardrails, or experiment context."
+              aria-label="Custom prompt"
+            />
+          </div>
           <div className="flex items-center gap-2 mt-3 flex-wrap">
             <span
               className="text-[11px]"
@@ -84,51 +112,52 @@ export function GoalBar({ onStart, onReset }: Props) {
               </button>
             ))}
           </div>
-          </div>
+            </div>
 
-          <div className="flex items-center gap-3 shrink-0">
-            <button
-              type="button"
-              onClick={() => onStart(value)}
-              disabled={running}
-              className={clsx(
-                "text-[14px] px-5 py-3 transition-colors rounded-lg",
-                running ? "cursor-not-allowed" : "hover:opacity-90"
-              )}
-              style={{
-                background: running ? "var(--surface-2)" : "var(--signal)",
-                color: running ? "var(--ink-faint)" : "var(--paper)",
-                border: running ? "1px solid var(--border)" : "1px solid var(--signal)",
-                fontWeight: 600,
-              }}
-            >
-              {running ? "Running..." : "Run loop"}
-            </button>
+            <div className="flex items-center gap-3 shrink-0 lg:self-start">
+              <button
+                type="button"
+                onClick={handleStart}
+                disabled={running}
+                className={clsx(
+                  "text-[14px] px-5 py-3 transition-colors rounded-lg",
+                  running ? "cursor-not-allowed" : "hover:opacity-90"
+                )}
+                style={{
+                  background: running ? "var(--surface-2)" : "var(--signal)",
+                  color: running ? "var(--ink-faint)" : "var(--paper)",
+                  border: running ? "1px solid var(--border)" : "1px solid var(--signal)",
+                  fontWeight: 600,
+                }}
+              >
+                {running ? "Running..." : "Run loop"}
+              </button>
 
-            <button
-              type="button"
-              onClick={onReset}
-              className="text-[14px] px-4 py-3 transition-colors rounded-lg"
-              style={{
-                color: "var(--ink-muted)",
-                border: "1px solid var(--border)",
-                background: "var(--surface)",
-              }}
-            >
-              reset
-            </button>
+              <button
+                type="button"
+                onClick={onReset}
+                className="text-[14px] px-4 py-3 transition-colors rounded-lg"
+                style={{
+                  color: "var(--ink-muted)",
+                  border: "1px solid var(--border)",
+                  background: "var(--surface)",
+                }}
+              >
+                reset
+              </button>
 
-            <button
-              type="button"
-              onClick={() => setHistoryOpen(true)}
-              className="text-[14px] px-1 py-3 transition-colors hover:text-ink"
-              style={{
-                color: "var(--ink-faint)",
-                fontWeight: 500,
-              }}
-            >
-              View history
-            </button>
+              <button
+                type="button"
+                onClick={() => setHistoryOpen(true)}
+                className="text-[14px] px-1 py-3 transition-colors hover:text-ink"
+                style={{
+                  color: "var(--ink-faint)",
+                  fontWeight: 500,
+                }}
+              >
+                View history
+              </button>
+            </div>
           </div>
         </div>
       </div>

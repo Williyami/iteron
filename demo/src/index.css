@@ -1,104 +1,148 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* PageTurn — editorial dark theme */
 @layer base {
   :root {
-    /* Editorial light palette — paper & ink */
-    --background: 39 33% 96%;          /* warm off-white paper */
-    --foreground: 0 0% 8%;             /* near-black ink */
+    --background: 150 12% 97%;
+    --foreground: 150 8% 11%;
 
-    --card: 39 30% 98%;
-    --card-foreground: 0 0% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 150 8% 11%;
 
-    --popover: 39 30% 98%;
-    --popover-foreground: 0 0% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 150 8% 11%;
 
-    --primary: 32 70% 40%;
-    --primary-foreground: 39 33% 96%;
+    --primary: 152 58% 34%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 39 20% 90%;
-    --secondary-foreground: 0 0% 8%;
+    --secondary: 150 10% 94%;
+    --secondary-foreground: 150 6% 22%;
 
-    --muted: 39 18% 90%;
-    --muted-foreground: 0 0% 38%;
+    --muted: 150 10% 94%;
+    --muted-foreground: 215 8% 44%;
 
-    --accent: 32 70% 40%;
-    --accent-foreground: 39 33% 96%;
+    --accent: 265 44% 47%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 70% 45%;
-    --destructive-foreground: 39 33% 96%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 39 15% 80%;
-    --input: 39 15% 80%;
-    --ring: 32 70% 40%;
+    --border: 148 14% 89%;
+    --input: 148 14% 89%;
+    --ring: 152 58% 34%;
 
-    --radius: 0.25rem;
+    --radius: 0.5rem;
 
-    /* Brand-specific — "paper" now means primary text color (ink), "ink" means inverse */
-    --amber: 32 70% 40%;
-    --amber-soft: 28 65% 35%;
-    --paper: 0 0% 8%;
-    --ink: 39 33% 96%;
-    --hairline: 39 15% 75%;
+    --genre-mystery:  220 70% 50%;
+    --genre-romance:  340 75% 55%;
+    --genre-scifi:    170 90% 40%;
+    --genre-fantasy:   35 80% 50%;
+    --genre-thriller:   0 70% 45%;
+    --genre-historical: 40 60% 50%;
 
-    --gradient-amber: linear-gradient(135deg, hsl(32 75% 45%), hsl(28 65% 35%));
-    --gradient-fade: linear-gradient(180deg, hsl(39 33% 96% / 0), hsl(39 33% 96%));
-    --shadow-card: 0 20px 50px -20px hsl(32 30% 25% / 0.22);
-    --shadow-amber: 0 10px 40px -10px hsl(32 70% 40% / 0.35);
+    --surface-hover:    150 8% 96%;
+    --surface-elevated: 0 0% 100%;
+
+    /* legacy tokens still used in a few places */
+    --amber:      152 58% 34%;
+    --amber-soft: 152 45% 28%;
+    --paper:      150 8% 11%;
+    --ink:        0 0% 100%;
+    --hairline:   148 14% 85%;
+    --shadow-card: 0 4px 24px -4px hsl(150 20% 20% / 0.12);
+    --shadow-amber: 0 8px 24px -6px hsl(152 58% 34% / 0.35);
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
+  * { @apply border-border; }
   html {
-    font-family: 'DM Sans', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "ss01", "ss02";
+    font-family: 'Jost', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 400;
   }
-  h1, h2, h3, h4, h5 {
-    font-family: 'Playfair Display', Georgia, serif;
-    letter-spacing: -0.01em;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Jost', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+  code, pre, kbd {
+    font-family: 'JetBrains Mono', 'SF Mono', monospace;
   }
 }
 
 @layer components {
-  .font-display { font-family: 'Playfair Display', Georgia, serif; }
-  .font-body { font-family: 'DM Sans', system-ui, sans-serif; }
+  .font-display { font-family: 'Jost', sans-serif; font-weight: 700; }
+  .font-body    { font-family: 'Jost', sans-serif; }
+  .font-mono    { font-family: 'JetBrains Mono', monospace; }
 
-  .hairline {
-    border-top: 1px solid hsl(var(--hairline));
-  }
-  .text-amber { color: hsl(var(--amber)); }
-  .bg-amber { background-color: hsl(var(--amber)); }
+  .hairline { border-top: 1px solid hsl(var(--hairline)); }
+
+  /* keep amber helpers for legacy usage */
+  .text-amber      { color: hsl(var(--primary)); }
+  .text-amber-soft { color: hsl(var(--amber-soft)); }
+  .bg-amber        { background-color: hsl(var(--primary)); }
 
   .pill {
-    @apply inline-flex items-center text-[11px] uppercase tracking-[0.14em] px-2.5 py-1 rounded-full border border-border text-muted-foreground;
+    @apply inline-flex items-center text-[11px] uppercase tracking-[0.12em] px-2.5 py-1 rounded-full border border-border text-muted-foreground bg-secondary;
   }
   .pill-amber {
-    @apply inline-flex items-center text-[11px] uppercase tracking-[0.14em] px-2.5 py-1 rounded-full;
-    background: hsl(var(--amber) / 0.12);
-    color: hsl(var(--amber-soft));
-    border: 1px solid hsl(var(--amber) / 0.35);
+    @apply inline-flex items-center text-[11px] uppercase tracking-[0.12em] px-2.5 py-1 rounded-full;
+    background: hsl(var(--primary) / 0.1);
+    color: hsl(var(--primary));
+    border: 1px solid hsl(var(--primary) / 0.3);
   }
 }
 
-@keyframes pulse-amber {
-  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--amber) / 0.5); }
-  50% { box-shadow: 0 0 0 8px hsl(var(--amber) / 0); }
+/* ── Jarvis HUD ──────────────────────────────────────────── */
+@keyframes jarvis-scan {
+  0%   { top: 8%; opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { top: 92%; opacity: 0; }
 }
-.animate-pulse-amber { animation: pulse-amber 2s ease-in-out infinite; }
+@keyframes jarvis-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+@keyframes jarvis-fadein {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes jarvis-highlight-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px var(--jarvis-color, #059669), 0 0 12px 2px var(--jarvis-color, #059669); }
+  50%       { box-shadow: 0 0 0 2px var(--jarvis-color, #059669), 0 0 24px 6px var(--jarvis-color, #059669); }
+}
+.jarvis-highlight {
+  animation: jarvis-highlight-pulse 1.5s ease-in-out infinite !important;
+  position: relative;
+  z-index: 10;
+}
+
+/* ── Misc animations ─────────────────────────────────────── */
+@keyframes pulse-primary {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4); }
+  50%       { box-shadow: 0 0 0 8px hsl(var(--primary) / 0); }
+}
+.animate-pulse-amber { animation: pulse-primary 2s ease-in-out infinite; }
 
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-.animate-fade-up { animation: fade-up 0.5s ease-out both; }
+.animate-fade-up { animation: fade-up 0.35s ease-out both; }
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow { animation: spin-slow 6s linear infinite; }
+
+/* scrollbar hide */
+.scrollbar-hide { scrollbar-width: none; -ms-overflow-style: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }

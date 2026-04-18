@@ -148,6 +148,13 @@ body.no-scroll {
   padding-right: 32px;
 }
 
+.dashboard-shell {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pulse-halo,
   .pulse-halo-idle,
