@@ -22,11 +22,11 @@ export function GoalBar({ onStart, onReset }: Props) {
 
   return (
     <section
-      className="bg-bone px-8 py-6"
-      style={{ borderBottom: "1px solid var(--border)" }}
+      className="bg-bone py-6"
     >
-      <div className="surface-card p-5 flex items-end gap-6 flex-wrap">
-        <div className="flex-1 min-w-[320px]">
+      <div className="page-shell">
+        <div className="surface-card p-5 flex items-end gap-6 flex-wrap">
+          <div className="flex-1 min-w-[320px]">
           <div
             className="text-[12px] mb-2"
             style={{ color: "var(--ink-faint)", fontWeight: 600 }}
@@ -84,51 +84,52 @@ export function GoalBar({ onStart, onReset }: Props) {
               </button>
             ))}
           </div>
-        </div>
+          </div>
 
-        <div className="flex items-center gap-3 shrink-0">
-          <button
-            type="button"
-            onClick={() => onStart(value)}
-            disabled={running}
-            className={clsx(
-              "text-[14px] px-5 py-3 transition-colors rounded-lg",
-              running ? "cursor-not-allowed" : "hover:opacity-90"
-            )}
-            style={{
-              background: running ? "var(--surface-2)" : "var(--signal)",
-              color: running ? "var(--ink-faint)" : "var(--paper)",
-              border: running ? "1px solid var(--border)" : "1px solid var(--signal)",
-              fontWeight: 600,
-            }}
-          >
-            {running ? "Running..." : "Run loop"}
-          </button>
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() => onStart(value)}
+              disabled={running}
+              className={clsx(
+                "text-[14px] px-5 py-3 transition-colors rounded-lg",
+                running ? "cursor-not-allowed" : "hover:opacity-90"
+              )}
+              style={{
+                background: running ? "var(--surface-2)" : "var(--signal)",
+                color: running ? "var(--ink-faint)" : "var(--paper)",
+                border: running ? "1px solid var(--border)" : "1px solid var(--signal)",
+                fontWeight: 600,
+              }}
+            >
+              {running ? "Running..." : "Run loop"}
+            </button>
 
-          <button
-            type="button"
-            onClick={onReset}
-            className="text-[14px] px-4 py-3 transition-colors rounded-lg"
-            style={{
-              color: "var(--ink-muted)",
-              border: "1px solid var(--border)",
-              background: "var(--surface)",
-            }}
-          >
-            reset
-          </button>
+            <button
+              type="button"
+              onClick={onReset}
+              className="text-[14px] px-4 py-3 transition-colors rounded-lg"
+              style={{
+                color: "var(--ink-muted)",
+                border: "1px solid var(--border)",
+                background: "var(--surface)",
+              }}
+            >
+              reset
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setHistoryOpen(true)}
-            className="text-[14px] px-1 py-3 transition-colors hover:text-ink"
-            style={{
-              color: "var(--ink-faint)",
-              fontWeight: 500,
-            }}
-          >
-            View history
-          </button>
+            <button
+              type="button"
+              onClick={() => setHistoryOpen(true)}
+              className="text-[14px] px-1 py-3 transition-colors hover:text-ink"
+              style={{
+                color: "var(--ink-faint)",
+                fontWeight: 500,
+              }}
+            >
+              View history
+            </button>
+          </div>
         </div>
       </div>
     </section>

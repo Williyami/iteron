@@ -9,33 +9,35 @@ export function DemoModeToggle() {
 
   return (
     <div
-      className="inline-flex items-center text-[10px] font-mono uppercase"
+      className="inline-flex items-center overflow-hidden rounded-lg text-[12px]"
       role="group"
       aria-label="Mode"
-      style={{ border: "1px solid var(--hairline-strong)", letterSpacing: "0.18em" }}
+      style={{ border: "1px solid var(--border)" }}
     >
       <button
         type="button"
         onClick={() => setMode("demo")}
-        className={clsx("px-3 py-1.5 transition-colors")}
+        className={clsx("px-4 py-2 transition-colors")}
         style={{
-          background: mode === "demo" ? "var(--ink)" : "transparent",
+          background: mode === "demo" ? "var(--ink)" : "var(--surface)",
           color: mode === "demo" ? "var(--bone)" : "var(--ink-muted)",
+          fontWeight: mode === "demo" ? 600 : 500,
         }}
       >
-        demo
+        Demo
       </button>
       <button
         type="button"
         onClick={() => setMode("live")}
-        className={clsx("px-3 py-1.5 transition-colors")}
+        className={clsx("px-4 py-2 transition-colors")}
         style={{
-          background: mode === "live" ? "var(--ink)" : "transparent",
+          background: mode === "live" ? "var(--ink)" : "var(--surface)",
           color: mode === "live" ? "var(--bone)" : "var(--ink-muted)",
-          borderLeft: "1px solid var(--hairline-strong)",
+          borderLeft: "1px solid var(--border)",
+          fontWeight: mode === "live" ? 600 : 500,
         }}
       >
-        live
+        Live
       </button>
     </div>
   );

@@ -3,11 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
+import type { ReactNode } from "react";
 import { IteronLogo } from "@/components/brand/IteronLogo";
 
 const NAV = [{ href: "/product", label: "product" }];
 
-export function MarketingNav() {
+export function MarketingNav({
+  rightSlot,
+}: {
+  rightSlot?: ReactNode;
+}) {
   const pathname = usePathname();
 
   return (
@@ -44,13 +49,14 @@ export function MarketingNav() {
             href="/dashboard"
             className="text-[12px] px-4 py-2 transition-colors hover:opacity-90 rounded-lg"
             style={{
-              background: "var(--ink)",
+              background: pathname === "/dashboard" ? "var(--signal)" : "var(--ink)",
               color: "var(--paper)",
               fontWeight: 600,
             }}
           >
             Open dashboard
           </Link>
+          {rightSlot}
         </div>
       </div>
     </header>
