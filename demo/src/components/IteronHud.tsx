@@ -173,10 +173,10 @@ export const IteronHud = () => {
         {!open ? (
           <button onClick={() => setOpen(true)} title="Iteron AI" style={{
             width: 44, height: 44, borderRadius: "50%",
-            background: "rgba(10,10,15,0.92)",
+            background: "transparent",
             border: "2px solid #34d399",
             cursor: "pointer",
-            boxShadow: "0 0 0 4px rgba(52,211,153,0.12), 0 2px 14px rgba(0,0,0,0.35)",
+            boxShadow: "0 0 0 4px rgba(52,211,153,0.12)",
             display: "flex", alignItems: "center", justifyContent: "center",
           }}>
             <BrandLogo variant="icon" className="h-5 w-5" />
