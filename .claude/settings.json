@@ -34,7 +34,16 @@
       "Bash(curl -s https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/components/ProductCard.tsx)",
       "Bash(curl -s https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/components/layout/Navbar.tsx)",
       "Bash(curl -s \"https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/pages/Home.tsx\")",
-      "Bash(curl -s \"https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/data/products.ts\")"
+      "Bash(curl -s \"https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/data/products.ts\")",
+      "Bash(git log *)",
+      "Bash(awk 'NR<=5 || NR>=170 {print NR\": \"length\\($0\\)\" chars\"}' \"/Users/williameklund/iteron/Iteron Logo Animation _standalone_.html\")",
+      "Bash(awk '{print NR\": \"length\\($0\\)\" chars\"}' \"/Users/williameklund/iteron/Iteron Logo Animation _standalone_.html\")",
+      "Bash(sort -t: -k2 -nr)",
+      "Bash(awk 'NR==175' \"/Users/williameklund/iteron/Iteron Logo Animation _standalone_.html\")",
+      "Read(//tmp/**)",
+      "Bash(awk 'NR==176' \"/Users/williameklund/iteron/Iteron Logo Animation _standalone_.html\")",
+      "Bash(python3)",
+      "Bash(shasum /Users/williameklund/iteron/dashboard/public/iteron-wordmark.png /Users/williameklund/iteron/dashboard/public/iteron-logo-full.png)"
     ]
   }
 }

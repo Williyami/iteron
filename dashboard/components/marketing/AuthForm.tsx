@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { getSupabase } from "@/lib/supabase-client";
 
 type Mode = "login" | "signup";
 
@@ -13,15 +15,38 @@ export function AuthForm({
   title: string;
   subtitle: string;
 }) {
-  const [notice, setNotice] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setNotice(
+    setError(null);
+    setLoading(true);
+
+    const form = e.currentTarget;
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+    const password = (form.elements.namedItem("password") as HTMLInputElement).value;
+
+    const supabase = getSupabase();
+    if (!supabase) {
+      setError("Auth is not configured.");
+      setLoading(false);
+      return;
+    }
+
+    const { error: authError } =
       mode === "login"
-        ? "Sign-in is coming online soon — the backend is still wiring up."
-        : "Workspace creation is coming online soon — the backend is still wiring up."
-    );
+        ? await supabase.auth.signInWithPassword({ email, password })
+        : await supabase.auth.signUp({ email, password });
+
+    if (authError) {
+      setError(authError.message);
+      setLoading(false);
+      return;
+    }
+
+    router.push("/dashboard");
   };
 
   return (
@@ -51,30 +76,37 @@ export function AuthForm({
           placeholder={mode === "signup" ? "At least 10 characters" : "••••••••"}
         />
 
-        <button type="submit" className="btn-primary mt-2 justify-center" style={{ width: "100%" }}>
-          {mode === "signup" ? "Create workspace" : "Sign in"}
-          <svg width="14" height="14" viewBox="0 0 12 12" fill="none" aria-hidden>
-            <path
-              d="M2.5 6h7m0 0L6 2.5M9.5 6L6 9.5"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn-primary mt-2 justify-center"
+          style={{ width: "100%", opacity: loading ? 0.7 : 1 }}
+        >
+          {loading ? "Please wait…" : mode === "signup" ? "Create workspace" : "Sign in"}
+          {!loading && (
+            <svg width="14" height="14" viewBox="0 0 12 12" fill="none" aria-hidden>
+              <path
+                d="M2.5 6h7m0 0L6 2.5M9.5 6L6 9.5"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
         </button>
 
-        {notice && (
+        {error && (
           <div
             className="mt-1 rounded-xl px-4 py-3 text-[13px] leading-[1.55]"
             style={{
-              background: "var(--mint-2)",
-              border: "1px solid rgba(29, 158, 117, 0.25)",
+              background: "rgba(220, 38, 38, 0.08)",
+              border: "1px solid rgba(220, 38, 38, 0.25)",
               color: "var(--deep)",
             }}
-            role="status"
+            role="alert"
           >
-            {notice}
+            {error}
           </div>
         )}
       </form>
@@ -114,6 +146,7 @@ function Field({
         name={id}
         type={type}
         placeholder={placeholder}
+        required
         autoComplete={
           type === "password"
             ? id === "password"

@@ -148,7 +148,7 @@ export default function Home() {
         </section>
 
         {/* Product pillars */}
-        <section className="page-shell-wide pt-28 pb-20">
+        <section className="page-shell-wide pt-28 pb-12">
           <div className="max-w-[760px]">
             <div
               className="text-[12px] font-semibold uppercase tracking-[0.08em]"
@@ -209,15 +209,33 @@ export default function Home() {
         </section>
 
         {/* Logo animation break */}
-        <section className="page-shell-wide py-8 flex justify-center">
-          <div style={{ width: 140, height: 140 }}>
-            <IteronLogoAnimation />
+        <section className="page-shell-wide py-0 flex justify-center">
+          <div
+            style={{
+              width: "100%",
+              maxWidth: 880,
+              aspectRatio: "880 / 260",
+              overflow: "hidden",
+              position: "relative",
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                top: "50%",
+                transform: "translateY(-50%)",
+              }}
+            >
+              <IteronLogoAnimation />
+            </div>
           </div>
         </section>
 
         {/* Mid gradient band — showcase */}
         <section className="section-wash-mint">
-          <div className="page-shell-wide py-24">
+          <div className="page-shell-wide pt-12 pb-24">
             <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
               <div>
                 <div

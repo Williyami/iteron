@@ -1,11 +1,20 @@
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
+import { Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 
 const geistSans = GeistSans;
 
 const geistMono = GeistMono;
+
+const cormorantGaramond = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  style: ["italic"],
+  variable: "--font-cormorant",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "iteron",
@@ -25,7 +34,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable}`}
+      className={`${geistSans.variable} ${geistMono.variable} ${cormorantGaramond.variable}`}
       style={{
         ["--font-sans" as string]: "var(--font-geist-sans)",
         ["--font-mono" as string]: "var(--font-geist-mono)",

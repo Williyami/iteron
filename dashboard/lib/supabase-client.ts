@@ -11,7 +11,7 @@ export function getSupabase(): SupabaseClient | null {
   if (!hasSupabaseCredentials) return null;
   if (!client) {
     client = createClient(supabaseUrl, supabaseAnonKey, {
-      auth: { persistSession: false },
+      auth: { persistSession: true },
     });
   }
   return client;
