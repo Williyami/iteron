@@ -28,7 +28,13 @@
       "Bash(sips -c 280 280 /Users/williameklund/iteron/demo/public/iteron-i.png --out /Users/williameklund/iteron/demo/public/iteron-favicon.png)",
       "Bash(sips --cropOffset 180 150 -c 200 200 /Users/williameklund/iteron/demo/public/iteron-i.png --out /Users/williameklund/iteron/demo/public/iteron-i-body.png)",
       "Bash(git add *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(curl -s https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/pages/Home.tsx)",
+      "Bash(curl -s https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/data/products.ts)",
+      "Bash(curl -s https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/components/ProductCard.tsx)",
+      "Bash(curl -s https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/components/layout/Navbar.tsx)",
+      "Bash(curl -s \"https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/pages/Home.tsx\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/data/products.ts\")"
     ]
   }
 }

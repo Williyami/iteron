@@ -24,21 +24,31 @@ export function StorePreview() {
   const iframeUrl = demoSite === "novawear" ? `${BASE_URL}/novawear` : BASE_URL;
   const siteLabel = SITE_LABELS[demoSite] ?? "localhost:8080";
 
+  // BroadcastChannel reaches both the iframe AND any open tab of the demo
+  const channelRef = useRef<BroadcastChannel | null>(null);
+  useEffect(() => {
+    channelRef.current = new BroadcastChannel("iteron-demo");
+    return () => { channelRef.current?.close(); channelRef.current = null; };
+  }, []);
+
+  const broadcast = (msg: object) => {
+    // 1. postMessage into the iframe
+    iframeRef.current?.contentWindow?.postMessage(msg, "*");
+    // 2. BroadcastChannel → reaches any other tab/window showing the demo
+    channelRef.current?.postMessage(msg);
+  };
+
   const prevStatusRef = useRef(runStatus);
   useEffect(() => {
-    if (
-      prevStatusRef.current === "running" &&
-      runStatus === "complete" &&
-      demoSite === "novawear" &&
-      appliedConfig?.configJson
-    ) {
-      iframeRef.current?.contentWindow?.postMessage(
-        { type: "iteron:config", payload: appliedConfig.configJson },
-        BASE_URL
-      );
+    if (prevStatusRef.current !== "running" && runStatus === "running") {
+      broadcast({ type: "iteron:run-start" });
+    }
+    if (prevStatusRef.current === "running" && runStatus === "complete") {
+      broadcast({ type: "iteron:run-complete", payload: appliedConfig?.configJson ?? null });
     }
     prevStatusRef.current = runStatus;
-  }, [runStatus, appliedConfig, demoSite]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [runStatus, appliedConfig]);
 
   const handleReload = () => {
     setLoaded(false);
@@ -152,7 +162,13 @@ export function StorePreview() {
           key={`${reloadKey}-${demoSite}`}
           ref={iframeRef}
           src={iframeUrl}
-          onLoad={() => setLoaded(true)}
+          onLoad={() => {
+            setLoaded(true);
+            // Re-send start if the run began while the iframe was still loading
+            if (runStatus === "running") {
+              setTimeout(() => broadcast({ type: "iteron:run-start" }), 200);
+            }
+          }}
           title={demoSite === "novawear" ? "NovaWear store" : "PageTurn store"}
           className="absolute inset-0 w-full h-full border-0"
           style={{ background: "var(--bone)" }}

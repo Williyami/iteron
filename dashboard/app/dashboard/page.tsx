@@ -64,16 +64,18 @@ export default function DashboardPage() {
       stopCurrent();
       startRun(goal);
       const trimmed = goal.trim() || "Improve CTR across all segments";
+      // Read demoSite fresh from store so preset site-switches are picked up
+      const currentSite = useStore.getState().demoSite;
       if (mode === "live") {
         cancelRef.current = openSseStream(trimmed, {
           onEvent: (ev) => applyEvent(ev),
-          onFallback: () => { cancelRef.current = runDemoLoop(trimmed, demoSite, applyEvent); },
+          onFallback: () => { cancelRef.current = runDemoLoop(trimmed, currentSite, applyEvent); },
         });
       } else {
-        cancelRef.current = runDemoLoop(trimmed, demoSite, applyEvent);
+        cancelRef.current = runDemoLoop(trimmed, currentSite, applyEvent);
       }
     },
-    [applyEvent, demoSite, mode, startRun, stopCurrent]
+    [applyEvent, mode, startRun, stopCurrent]
   );
 
   const handleReset = useCallback(() => { stopCurrent(); reset(); }, [reset, stopCurrent]);

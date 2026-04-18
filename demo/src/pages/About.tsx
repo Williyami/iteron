@@ -1,7 +1,10 @@
 import { Header } from "@/components/Header";
 import { IrisHud } from "@/components/IrisHud";
+import { usePageMeta } from "@/lib/use-page-meta";
 
-const About = () => (
+const About = () => {
+  usePageMeta("PageTurn");
+  return (
   <div className="min-h-screen bg-background">
     <Header />
     <main className="container py-20">
@@ -17,6 +20,7 @@ const About = () => (
     </main>
     <IrisHud site="pageturn" />
   </div>
-);
+  );
+};
 
 export default About;

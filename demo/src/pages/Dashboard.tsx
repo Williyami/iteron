@@ -9,6 +9,7 @@ import {
 import { Link } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { IrisHud } from "@/components/IrisHud";
+import { usePageMeta } from "@/lib/use-page-meta";
 
 // ── types ───────────────────────────────────────────────────────────────────
 type Tab = "home" | "history" | "analytics" | "settings";
@@ -743,6 +744,7 @@ const NAV_MAIN = [
 
 // ── Root component ───────────────────────────────────────────────────────────────
 const Dashboard = () => {
+  usePageMeta("PageTurn");
   const [tab, setTab] = useState<Tab>("home");
 
   return (

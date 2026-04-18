@@ -1,34 +1,53 @@
-export type NovaWearCategory = "womens" | "mens" | "sale";
+const A = "https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/assets";
+
+export type NovaWearGender = "Women" | "Men" | "Unisex";
 
 export interface NovaWearProduct {
   id: string;
   name: string;
-  category: NovaWearCategory;
+  gender: NovaWearGender;
   price: number;
   originalPrice?: number;
-  badge?: string;
-  color: string;
-  accentColor: string;
+  image: string;
+  isNew?: boolean;
 }
 
 export const NOVAWEAR_PRODUCTS: NovaWearProduct[] = [
-  // Women's
-  { id: "nw-01", name: "Merino Wrap Coat",       category: "womens", price: 2890, color: "#8B7355", accentColor: "#6B5535" },
-  { id: "nw-02", name: "Linen Slip Dress",        category: "womens", price: 1290, color: "#D4C4B0", accentColor: "#B0A090" },
-  { id: "nw-03", name: "Oversized Blazer",        category: "womens", price: 2190, color: "#2C2C2C", accentColor: "#1A1A1A", badge: "New" },
-  { id: "nw-04", name: "Wide-Leg Trousers",       category: "womens", price: 1490, color: "#6B6B6B", accentColor: "#4A4A4A" },
-  { id: "nw-05", name: "Cashmere Turtleneck",     category: "womens", price: 1890, color: "#C4B49A", accentColor: "#A09070" },
-  { id: "nw-06", name: "Tailored Midi Skirt",     category: "womens", price: 1190, color: "#4A4A4A", accentColor: "#2E2E2E" },
-  // Men's
-  { id: "nw-07", name: "Unstructured Suit Jacket",category: "mens",   price: 3290, color: "#3D3D3D", accentColor: "#1E1E1E" },
-  { id: "nw-08", name: "Heavy Linen Shirt",       category: "mens",   price: 990,  color: "#E8E0D0", accentColor: "#C8C0B0" },
-  { id: "nw-09", name: "Leather Belt",            category: "mens",   price: 690,  color: "#5C4033", accentColor: "#3C2013", badge: "Limited" },
-  { id: "nw-10", name: "Straight Chinos",         category: "mens",   price: 1290, color: "#9E8E7A", accentColor: "#7E6E5A" },
-  { id: "nw-11", name: "Merino Crewneck",         category: "mens",   price: 1590, color: "#1C1C1C", accentColor: "#0A0A0A" },
-  { id: "nw-12", name: "Suede Chelsea Boots",     category: "mens",   price: 2890, color: "#704214", accentColor: "#4A2800" },
-  // Sale
-  { id: "nw-13", name: "Silk Blouse",             category: "sale",   price: 790,  originalPrice: 1590, color: "#C8B89A", accentColor: "#A89878" },
-  { id: "nw-14", name: "Cargo Trousers",          category: "sale",   price: 890,  originalPrice: 1890, color: "#7A7A6A", accentColor: "#5A5A4A" },
-  { id: "nw-15", name: "Knit Vest",               category: "sale",   price: 590,  originalPrice: 1190, color: "#B8A898", accentColor: "#988878" },
-  { id: "nw-16", name: "Canvas Tote",             category: "sale",   price: 390,  originalPrice: 790,  color: "#4A3D35", accentColor: "#2A1D15" },
+  // Women
+  { id: "atlas-trench",     name: "Atlas Wool Trench",            gender: "Women",  price: 489, image: `${A}/product-coat.jpg`,           isNew: true },
+  { id: "ovo-knit",         name: "Ovo Cashmere Knit",            gender: "Women",  price: 245, image: `${A}/product-knit.jpg`,           isNew: true },
+  { id: "ines-blazer",      name: "Inès Single-Breasted Blazer",  gender: "Women",  price: 365, image: `${A}/product-blazer-women.jpg`,   isNew: true },
+  { id: "lyre-slip-dress",  name: "Lyre Silk Slip Dress",         gender: "Women",  price: 285, image: `${A}/product-dress-slip.jpg`,     isNew: true },
+  { id: "isla-sandal",      name: "Isla Leather Sandal",          gender: "Women",  price: 245, image: `${A}/product-sandals.jpg`,        isNew: true },
+  { id: "sable-wrap-dress", name: "Sable Silk Wrap Dress",        gender: "Women",  price: 325, image: `${A}/product-wrap-dress.jpg`,     isNew: true },
+  { id: "ines-pump",        name: "Inès Pointed Leather Pump",    gender: "Women",  price: 295, image: `${A}/product-pumps.jpg`,          isNew: true },
+  { id: "rae-biker",        name: "Rae Leather Biker Jacket",     gender: "Women",  price: 595, image: `${A}/product-leather-jacket.jpg`, isNew: true },
+  { id: "linde-trousers",   name: "Linde Wide-Leg Trouser",       gender: "Women",  price: 138, originalPrice: 198, image: `${A}/product-trousers.jpg` },
+  { id: "vela-skirt",       name: "Vela Pleated Midi Skirt",      gender: "Women",  price: 107, originalPrice: 178, image: `${A}/product-skirt.jpg` },
+  { id: "ada-jeans",        name: "Ada High-Rise Jean",           gender: "Women",  price: 119, originalPrice: 158, image: `${A}/product-jeans-women.jpg` },
+  { id: "noma-tshirt",      name: "Noma Cotton Tee",              gender: "Women",  price: 54,  originalPrice: 68,  image: `${A}/product-tshirt.jpg` },
+  { id: "mira-blouse",      name: "Mira Silk Blouse",             gender: "Women",  price: 168, image: `${A}/product-blouse.jpg` },
+  { id: "lila-cardigan",    name: "Lila Oversized Cardigan",      gender: "Women",  price: 285, image: `${A}/product-cardigan.jpg` },
+  { id: "remy-cropped",     name: "Remy Cropped Wool Trouser",    gender: "Women",  price: 215, image: `${A}/product-cropped-trousers.jpg` },
+  // Men
+  { id: "vance-blazer",     name: "Vance Double-Breasted Blazer", gender: "Men",    price: 525, image: `${A}/product-blazer-men.jpg`,     isNew: true },
+  { id: "halden-shirt",     name: "Halden Oxford Shirt",          gender: "Men",    price: 145, image: `${A}/product-shirt-men.jpg`,      isNew: true },
+  { id: "milan-loafer",     name: "Milan Penny Loafer",           gender: "Men",    price: 425, image: `${A}/product-loafers.jpg`,        isNew: true },
+  { id: "holt-overcoat",    name: "Holt Wool Overcoat",           gender: "Men",    price: 685, image: `${A}/product-overcoat-men.jpg`,   isNew: true },
+  { id: "soren-derby",      name: "Søren Leather Derby",          gender: "Men",    price: 445, image: `${A}/product-derby-men.jpg`,      isNew: true },
+  { id: "kaden-parka",      name: "Kaden Field Parka",            gender: "Men",    price: 319, originalPrice: 425, image: `${A}/product-parka.jpg` },
+  { id: "rune-tshirt",      name: "Rune Heavyweight Tee",         gender: "Men",    price: 55,  originalPrice: 78,  image: `${A}/product-tshirt-men.jpg` },
+  { id: "yves-knit",        name: "Yves Merino Crewneck",         gender: "Men",    price: 195, image: `${A}/product-knit-men.jpg` },
+  { id: "cole-denim",       name: "Cole Selvedge Denim",          gender: "Men",    price: 215, image: `${A}/product-jeans-men.jpg` },
+  { id: "oslo-trouser",     name: "Oslo Tailored Trouser",        gender: "Men",    price: 225, image: `${A}/product-trousers-men.jpg` },
+  { id: "rio-bomber",       name: "Rio Leather Bomber",           gender: "Men",    price: 545, image: `${A}/product-bomber-men.jpg` },
+  { id: "noel-henley",      name: "Noel Linen Henley Shirt",      gender: "Men",    price: 135, image: `${A}/product-henley-men.jpg` },
+  // Accessories / Unisex
+  { id: "siena-scarf",      name: "Siena Wool Scarf",             gender: "Unisex", price: 165, image: `${A}/product-scarf.jpg`,          isNew: true },
+  { id: "mercer-watch",     name: "Mercer Field Watch",           gender: "Unisex", price: 365, image: `${A}/product-watch.jpg`,          isNew: true },
+  { id: "tully-crossbody",  name: "Tully Leather Crossbody",      gender: "Unisex", price: 285, image: `${A}/product-crossbody.jpg` },
+  { id: "fjord-beanie",     name: "Fjord Ribbed Cashmere Beanie", gender: "Unisex", price: 95,  image: `${A}/product-beanie.jpg` },
+  { id: "orion-belt",       name: "Orion Woven Leather Belt",     gender: "Unisex", price: 88,  originalPrice: 135, image: `${A}/product-belt.jpg` },
+  { id: "noma-sunglasses",  name: "Noma Acetate Sunglasses",      gender: "Unisex", price: 185, image: `${A}/product-sunglasses.jpg` },
+  { id: "court-sneaker",    name: "Court Leather Sneaker",        gender: "Unisex", price: 215, image: `${A}/product-sneakers.jpg`,       isNew: true },
 ];

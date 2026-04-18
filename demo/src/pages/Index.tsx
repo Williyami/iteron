@@ -1,4 +1,5 @@
 import { useNavigate, Link } from "react-router-dom";
+import { usePageMeta } from "@/lib/use-page-meta";
 import { ArrowRight, Clock, ShoppingCart, Search, Heart, Rocket, Swords, Crosshair, Landmark, Sparkles } from "lucide-react";
 import { Header } from "@/components/Header";
 import { CategoryBar } from "@/components/CategoryBar";
@@ -27,6 +28,7 @@ const heroBooks    = [books[0], books[5], books[10], books[15], books[20]];
 const dealBook     = books.find((b) => b.originalPrice && b.bestseller) ?? books[0];
 
 const Index = () => {
+  usePageMeta("PageTurn");
   const navigate = useNavigate();
 
   return (

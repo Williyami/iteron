@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { usePageMeta } from "@/lib/use-page-meta";
 import { useSearchParams } from "react-router-dom";
 import { SlidersHorizontal, Sparkles } from "lucide-react";
 import { Header } from "@/components/Header";
@@ -16,6 +17,7 @@ type MysteryConfig = {
 };
 
 const Browse = () => {
+  usePageMeta("PageTurn");
   const [searchParams] = useSearchParams();
   const genreParam = searchParams.get("genre");
   const initialGenre: Genre | "All" =
@@ -47,12 +49,19 @@ const Browse = () => {
     const interval = setInterval(fetchConfig, 5000);
     const onComplete = () => fetchConfig();
     const onReset = () => setMysteryConfig(null);
+    // Fired by IteronHud when it receives iteron:run-complete postMessage from dashboard
+    const onConfig = (e: Event) => {
+      const payload = (e as CustomEvent).detail;
+      if (payload?.tags) setMysteryConfig(payload as MysteryConfig);
+    };
     window.addEventListener("iteron-loop-complete", onComplete);
     window.addEventListener("iteron-reset", onReset);
+    window.addEventListener("iteron-config", onConfig);
     return () => {
       clearInterval(interval);
       window.removeEventListener("iteron-loop-complete", onComplete);
       window.removeEventListener("iteron-reset", onReset);
+      window.removeEventListener("iteron-config", onConfig);
     };
   }, []);
 

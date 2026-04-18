@@ -13,6 +13,7 @@ interface Props {
 export function GoalBar({ onStart, onReset }: Props) {
   const running        = useStore((s) => s.run.status === "running");
   const demoSite       = useStore((s) => s.demoSite);
+  const setDemoSite    = useStore((s) => s.setDemoSite);
   const setHistoryOpen = useStore((s) => s.setHistoryOpen);
 
   const presets = PRESETS_BY_SITE[demoSite];
@@ -21,8 +22,20 @@ export function GoalBar({ onStart, onReset }: Props) {
 
   useEffect(() => { setValue(presets[0]); }, [demoSite, presets]);
 
+  // Detect which site a preset belongs to and switch demoSite accordingly
+  const siteForPreset = (preset: string): "pageturn" | "novawear" => {
+    const novawearKeywords = ["women", "sale", "accessor", "men's"];
+    const lower = preset.toLowerCase();
+    return novawearKeywords.some((kw) => lower.includes(kw)) ? "novawear" : "pageturn";
+  };
+
   const handleChip = (preset: string) => {
+    if (running) return;
+    const targetSite = siteForPreset(preset);
+    if (targetSite !== demoSite) setDemoSite(targetSite);
     setValue(preset);
+    // Small delay so setDemoSite flushes to store before runDemoLoop reads it
+    setTimeout(() => onStart(preset), 50);
   };
 
   const handleStart = () => {

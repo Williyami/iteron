@@ -42,7 +42,8 @@ const DEMO_STEPS: AgentStep[] = [
   { agent: "optimizer", node: "measure_results",   status: "complete", message: "Test wins! +38% CTR lift · scaling to 100%",            data: { segment: "Mystery", ctr_control: 0.012, ctr_test: 0.0166, improvement: "+38%", winner: "test" } },
 ];
 
-const STEP_DELAYS = [400, 1200, 400, 1400, 400, 1600, 400, 900, 400, 1800];
+// Spread across ~23 s to stay in sync with the dashboard's demo-script duration
+const STEP_DELAYS = [400, 2000, 400, 2500, 400, 3000, 400, 2500, 400, 3500];
 
 // ── Jarvis overlay (scanning layer on top of the page) ───────────────────────
 const JarvisOverlay = ({
@@ -163,6 +164,24 @@ export const IteronHud = () => {
   };
 
   useEffect(() => () => clearTimers(), []);
+
+  // Listen for postMessage from the dashboard's StorePreview iframe
+  useEffect(() => {
+    const onMessage = (e: MessageEvent) => {
+      if (e.data?.type === "iteron:run-start") {
+        setOpen(true);
+        runLoop();
+      }
+      if (e.data?.type === "iteron:run-complete") {
+        window.dispatchEvent(new CustomEvent("iteron-loop-complete"));
+        if (e.data.payload) {
+          window.dispatchEvent(new CustomEvent("iteron-config", { detail: e.data.payload }));
+        }
+      }
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [runLoop]);
 
   const pct = (v: number) => (v * 100).toFixed(1) + "%";
 

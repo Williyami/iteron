@@ -56,7 +56,8 @@ const NOVAWEAR_STEPS: AgentStep[] = [
   { agent: "optimizer", node: "measure_results",   status: "complete", message: "Test wins! +50% CTR lift · scaling to 100%", data: { segment: "Womens", ctr_control: 0.014, ctr_test: 0.021, improvement: "+50%", winner: "test" } },
 ];
 
-const STEP_DELAYS = [400, 1200, 400, 1400, 400, 1600, 400, 900, 400, 1800];
+// ~12 s total — fast enough to feel live, slow enough to read each step
+const STEP_DELAYS = [300, 800, 300, 900, 300, 1000, 300, 700, 300, 1200];
 
 // ── Iris overlay ──────────────────────────────────────────────────────────────
 const IrisOverlay = ({
@@ -133,6 +134,9 @@ export const IrisHud = ({ site = "pageturn" }: IrisHudProps) => {
 
   const demoSteps = site === "novawear" ? NOVAWEAR_STEPS : PAGETURN_STEPS;
 
+  // Stable ref so we can guard against double-runs without stale closure issues
+  const runningRef = useRef(false);
+
   const clearTimers = () => { timersRef.current.forEach(clearTimeout); timersRef.current = []; };
   const addHudLine  = (line: string) => setHudLines((l) => [...l, `> ${line.toUpperCase()}`]);
 
@@ -147,7 +151,8 @@ export const IrisHud = ({ site = "pageturn" }: IrisHudProps) => {
   }, []);
 
   const runLoop = useCallback(async () => {
-    if (running) return;
+    if (runningRef.current) return;
+    runningRef.current = true;
     setRunning(true); setSteps([]); setResult(null); setHudLines([]);
     window.dispatchEvent(new CustomEvent("iteron-loop-start"));
     let elapsed = 0;
@@ -175,17 +180,48 @@ export const IrisHud = ({ site = "pageturn" }: IrisHudProps) => {
         } catch { /* silent */ }
         window.dispatchEvent(new CustomEvent("iteron-loop-complete"));
       }
+      runningRef.current = false;
       setRunning(false);
     }, total);
     timersRef.current.push(ft);
-  }, [running, addOrUpdateStep, demoSteps, site]);
+  }, [addOrUpdateStep, demoSteps, site]);
 
   const reset = () => {
-    clearTimers(); setRunning(false); setSteps([]); setResult(null); setHudLines([]);
+    clearTimers(); runningRef.current = false; setRunning(false); setSteps([]); setResult(null); setHudLines([]);
     window.dispatchEvent(new CustomEvent("iteron-reset"));
   };
 
   useEffect(() => () => clearTimers(), []);
+
+  // Keep a stable ref to runLoop so message listeners never go stale
+  const runLoopRef = useRef(runLoop);
+  useEffect(() => { runLoopRef.current = runLoop; }, [runLoop]);
+
+  // Triggered by dashboard — both postMessage (iframe) and BroadcastChannel (separate tab)
+  useEffect(() => {
+    const handle = (data: { type: string; payload?: unknown }) => {
+      if (data?.type === "iteron:run-start") {
+        setOpen(true);
+        runLoopRef.current();
+      }
+      if (data?.type === "iteron:run-complete") {
+        window.dispatchEvent(new CustomEvent("iteron-loop-complete"));
+        if (data.payload) {
+          window.dispatchEvent(new CustomEvent("iteron-config", { detail: data.payload }));
+        }
+      }
+    };
+    const onMessage = (e: MessageEvent) => handle(e.data);
+    const channel = new BroadcastChannel("iteron-demo");
+    const onBroadcast = (e: MessageEvent) => handle(e.data);
+    window.addEventListener("message", onMessage);
+    channel.addEventListener("message", onBroadcast);
+    return () => {
+      window.removeEventListener("message", onMessage);
+      channel.removeEventListener("message", onBroadcast);
+      channel.close();
+    };
+  }, []); // stable — never re-registers
 
   const pct = (v: number) => (v * 100).toFixed(1) + "%";
 
