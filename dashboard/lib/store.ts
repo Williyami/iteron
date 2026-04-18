@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { subscribeWithSelector } from "zustand/middleware";
+import { createJSONStorage, persist, subscribeWithSelector } from "zustand/middleware";
 import type {
   AbResult,
   AppliedConfigState,
@@ -50,8 +50,20 @@ const freshSegments = (): Record<Segment, SegmentState> => ({
 let thoughtSeq = 0;
 const nextThoughtId = () => `t-${Date.now()}-${++thoughtSeq}`;
 
+const isLocalRow = (id: string) => id.startsWith("local-");
+
+const mergeHistory = (incoming: RunRow[], existing: RunRow[]): RunRow[] => {
+  const incomingIds = new Set(incoming.map((r) => r.id));
+  const localOnly = existing.filter((r) => isLocalRow(r.id) && !incomingIds.has(r.id));
+  return [...localOnly, ...incoming]
+    .sort((a, b) => b.created_at.localeCompare(a.created_at))
+    .slice(0, 200);
+};
+
 export const useStore = create<DashboardState>()(
-  subscribeWithSelector((set) => ({
+  subscribeWithSelector(
+    persist(
+      (set) => ({
     mode: "demo",
     run: { status: "idle", goal: "", startedAt: null },
     pipeline: { nodes: freshPipeline() },
@@ -138,10 +150,25 @@ export const useStore = create<DashboardState>()(
               },
             };
           }
-          case "run.complete":
+          case "run.complete": {
+            const ab = state.latestAb;
+            const row: RunRow = {
+              id: `local-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+              goal: state.run.goal || null,
+              segment_targeted: ab?.segment ?? null,
+              ctr_before: ab?.ctrBefore ?? null,
+              ctr_after: ab?.ctrAfter ?? null,
+              improvement_pct: ab?.improvementPct ?? null,
+              winner_variant: ab?.winner ?? null,
+              status: "complete",
+              error_message: null,
+              created_at: new Date().toISOString(),
+            };
             return {
               run: { ...state.run, status: "complete" },
+              history: [row, ...state.history].slice(0, 200),
             };
+          }
           default:
             return {};
         }
@@ -157,12 +184,27 @@ export const useStore = create<DashboardState>()(
       })),
 
     setMode: (mode) => set({ mode }),
-    setHistory: (history) => set({ history }),
+    setHistory: (rows) =>
+      set((state) => ({ history: mergeHistory(rows, state.history) })),
     setTickerSeed: (tickerEvents) => set({ tickerEvents }),
     pushTickerEvent: (event) =>
       set((state) => ({
         tickerEvents: [...state.tickerEvents.slice(-120), event],
       })),
     setHistoryOpen: (historyOpen) => set({ historyOpen }),
-  }))
+      }),
+      {
+        name: "iteron-dashboard",
+        version: 1,
+        storage: createJSONStorage(() => localStorage),
+        partialize: (state) => ({
+          mode: state.mode,
+          history: state.history,
+          segments: state.segments,
+          latestAb: state.latestAb,
+          appliedConfig: state.appliedConfig,
+        }),
+      }
+    )
+  )
 );

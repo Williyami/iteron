@@ -1,26 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useStore } from "@/lib/store";
 import { ApplyingOverlay } from "./ApplyingOverlay";
 
 const PAGETURN_URL = "http://localhost:8080";
-const IFRAME_TIMEOUT_MS = 4000;
 
 export function StorePreview() {
   const [loaded, setLoaded] = useState(false);
-  const [fallback, setFallback] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const running = useStore((s) => s.run.status === "running");
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    timerRef.current = setTimeout(() => {
-      if (!loaded) setFallback(true);
-    }, IFRAME_TIMEOUT_MS);
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, [loaded]);
+  const handleReload = () => {
+    setLoaded(false);
+    setReloadKey((k) => k + 1);
+  };
 
   return (
     <section
@@ -28,54 +22,111 @@ export function StorePreview() {
       style={{ border: "1px solid var(--hairline)" }}
     >
       <div
-        className="flex items-baseline justify-between px-4 py-2.5"
+        className="flex items-baseline justify-between px-4 py-2.5 gap-3"
         style={{ borderBottom: "1px solid var(--hairline)" }}
       >
         <span
-          className="font-mono text-[10px] uppercase"
+          className="font-mono text-[10px] uppercase truncate"
           style={{ color: "var(--ink-faint)", letterSpacing: "0.22em" }}
         >
           iframe · localhost:8080
         </span>
-        <span
-          className="font-mono text-[9px] uppercase"
-          style={{
-            color: loaded && !fallback ? "var(--signal)" : "var(--ink-faint)",
-            letterSpacing: "0.2em",
-          }}
-        >
-          {fallback ? "◆ snapshot" : loaded ? "◆ connected" : "connecting…"}
-        </span>
+        <div className="flex items-center gap-3 shrink-0">
+          <span
+            className="font-mono text-[9px] uppercase"
+            style={{
+              color: loaded ? "var(--signal)" : "var(--ink-faint)",
+              letterSpacing: "0.2em",
+            }}
+          >
+            {loaded ? "◆ connected" : "connecting…"}
+          </span>
+          <button
+            type="button"
+            onClick={handleReload}
+            className="group inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-md transition-colors"
+            style={{
+              color: "var(--ink-muted)",
+              border: "1px solid var(--border)",
+              background: "var(--surface)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "var(--ink)";
+              e.currentTarget.style.borderColor = "var(--hairline-strong)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "var(--ink-muted)";
+              e.currentTarget.style.borderColor = "var(--border)";
+            }}
+            aria-label="Reload store preview"
+          >
+            <svg
+              width="11"
+              height="11"
+              viewBox="0 0 14 14"
+              fill="none"
+              aria-hidden
+              className="transition-transform group-hover:rotate-90"
+            >
+              <path
+                d="M12 2v3h-3M2 12V9h3M11.5 5.5a5 5 0 0 0-9 .5M2.5 8.5a5 5 0 0 0 9-.5"
+                stroke="currentColor"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            Reload
+          </button>
+          <a
+            href={PAGETURN_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-md transition-colors"
+            style={{
+              color: "var(--ink-muted)",
+              border: "1px solid var(--border)",
+              background: "var(--surface)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "var(--signal)";
+              e.currentTarget.style.borderColor = "var(--signal)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "var(--ink-muted)";
+              e.currentTarget.style.borderColor = "var(--border)";
+            }}
+            aria-label="Open PageTurn in new tab"
+          >
+            Open store
+            <svg
+              width="11"
+              height="11"
+              viewBox="0 0 12 12"
+              fill="none"
+              aria-hidden
+              className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            >
+              <path
+                d="M4 8l4-4M4.5 4h3.5v3.5"
+                stroke="currentColor"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </a>
+        </div>
       </div>
       <div className="relative w-full" style={{ height: "calc(100% - 37px)" }}>
-        {!fallback && (
-          <iframe
-            src={PAGETURN_URL}
-            onLoad={() => setLoaded(true)}
-            title="PageTurn store"
-            className="absolute inset-0 w-full h-full border-0"
-            style={{ background: "var(--bone)" }}
-          />
-        )}
-        {fallback && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src="/pageturn-fallback.png"
-            alt="PageTurn snapshot"
-            className="absolute inset-0 w-full h-full object-cover object-top"
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).style.display = "none";
-            }}
-          />
-        )}
-        {fallback && (
-          <div
-            className="absolute inset-0 flex items-center justify-center font-mono text-[11px] uppercase pointer-events-none"
-            style={{ color: "var(--ink-faint)", letterSpacing: "0.25em" }}
-          >
-            // pageturn offline · demo mode
-          </div>
-        )}
+        <iframe
+          key={reloadKey}
+          src={PAGETURN_URL}
+          onLoad={() => setLoaded(true)}
+          title="PageTurn store"
+          className="absolute inset-0 w-full h-full border-0"
+          style={{ background: "var(--bone)" }}
+        />
         {running && <ApplyingOverlay />}
       </div>
     </section>

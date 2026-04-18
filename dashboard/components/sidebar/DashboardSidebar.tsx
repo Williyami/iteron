@@ -6,7 +6,7 @@ import clsx from "clsx";
 import { IteronLogo } from "@/components/brand/IteronLogo";
 import { useStore } from "@/lib/store";
 
-type NavTab = "overview" | "history" | "analytics" | "settings";
+type NavTab = "overview" | "history" | "analytics" | "connections" | "settings";
 
 interface Props {
   active: NavTab;
@@ -46,16 +46,30 @@ const NAV_ITEMS: { id: NavTab; label: string; icon: React.ReactNode }[] = [
     ),
   },
   {
-    id: "settings",
-    label: "Settings",
+    id: "connections",
+    label: "Connections",
     icon: (
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-        <circle cx="8" cy="8" r="2.25" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M2.93 2.93l1.06 1.06M12.01 12.01l1.06 1.06M2.93 13.07l1.06-1.06M12.01 3.99l1.06-1.06" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M6.5 9.5l-2 2a2.5 2.5 0 1 1-3.5-3.5l2-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M9.5 6.5l2-2a2.5 2.5 0 1 1 3.5 3.5l-2 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M5.75 10.25l4.5-4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     ),
   },
 ];
+
+const SETTINGS_ICON = (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <path
+      d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.6" />
+  </svg>
+);
 
 export function DashboardSidebar({ active, onSelect }: Props) {
   const runStatus = useStore((s) => s.run.status);
@@ -209,35 +223,42 @@ export function DashboardSidebar({ active, onSelect }: Props) {
         </ul>
       </nav>
 
-      {/* Bottom: run status */}
-      <div
-        className="px-4 py-4 shrink-0"
-        style={{ borderTop: "1px solid var(--hairline)" }}
-      >
-        <div
-          className="text-[11px] font-mono"
-          style={{ color: "var(--ink-faint)", letterSpacing: "0.06em" }}
-        >
-          {runStatus === "running" && (
-            <span style={{ color: "var(--signal)" }}>● running</span>
-          )}
-          {runStatus === "complete" && (
-            <span style={{ color: "var(--ink-muted)" }}>✓ complete</span>
-          )}
-          {runStatus === "idle" && (
-            <span>— idle</span>
-          )}
-          {runStatus === "failed" && (
-            <span style={{ color: "var(--rust)" }}>✕ failed</span>
-          )}
-        </div>
-        <div
-          className="text-[10px] mt-0.5"
-          style={{ color: "var(--ink-faint)" }}
-        >
-          Iteron AI · v0.1
-        </div>
+      {/* Settings (bottom) */}
+      <div className="px-3 pb-2 pt-3 shrink-0" style={{ borderTop: "1px solid var(--hairline)" }}>
+        {(() => {
+          const isActive = active === "settings";
+          return (
+            <button
+              onClick={() => onSelect("settings")}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all"
+              style={{
+                background: isActive ? "color-mix(in oklch, var(--signal) 10%, transparent)" : "transparent",
+                color: isActive ? "var(--signal)" : "var(--ink-muted)",
+                fontWeight: isActive ? 600 : 400,
+                fontSize: "13px",
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.background = "var(--surface-2)";
+                  e.currentTarget.style.color = "var(--ink)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.background = "transparent";
+                  e.currentTarget.style.color = "var(--ink-muted)";
+                }
+              }}
+            >
+              <span style={{ color: isActive ? "var(--signal)" : "var(--ink-faint)" }}>
+                {SETTINGS_ICON}
+              </span>
+              <span className="flex-1">Settings</span>
+            </button>
+          );
+        })()}
       </div>
+
     </aside>
   );
 }

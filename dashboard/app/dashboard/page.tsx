@@ -6,12 +6,14 @@ import { useStore } from "@/lib/store";
 import { runDemoLoop } from "@/lib/demo-script";
 import { openSseStream } from "@/lib/sse-client";
 import { GoalBar } from "@/components/header/GoalBar";
+import { OverviewHeader } from "@/components/header/OverviewHeader";
 import { DashboardSidebar } from "@/components/sidebar/DashboardSidebar";
 import { HistoryPanel } from "@/components/sidebar/HistoryPanel";
 import { AnalyticsPanel } from "@/components/sidebar/AnalyticsPanel";
+import { ConnectionsPanel } from "@/components/sidebar/ConnectionsPanel";
 import { SettingsPanel } from "@/components/sidebar/SettingsPanel";
 
-type NavTab = "overview" | "history" | "analytics" | "settings";
+type NavTab = "overview" | "history" | "analytics" | "connections" | "settings";
 
 const PipelineGraph = dynamic(
   () => import("@/components/pipeline/PipelineGraph").then((mod) => mod.PipelineGraph),
@@ -87,6 +89,7 @@ export default function DashboardPage() {
 
         {tab === "overview" && (
           <>
+            <OverviewHeader />
             <GoalBar onStart={handleStart} onReset={handleReset} />
 
             <main className="flex-1 flex flex-col">
@@ -154,9 +157,10 @@ export default function DashboardPage() {
 
         {tab !== "overview" && (
           <div className="flex-1 px-8 py-8 max-w-5xl">
-            {tab === "history"   && <HistoryPanel />}
-            {tab === "analytics" && <AnalyticsPanel />}
-            {tab === "settings"  && <SettingsPanel />}
+            {tab === "history"     && <HistoryPanel />}
+            {tab === "analytics"   && <AnalyticsPanel />}
+            {tab === "connections" && <ConnectionsPanel />}
+            {tab === "settings"    && <SettingsPanel />}
           </div>
         )}
 

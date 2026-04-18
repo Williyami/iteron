@@ -8,12 +8,12 @@ const geistSans = GeistSans;
 const geistMono = GeistMono;
 
 export const metadata: Metadata = {
-  title: "Iteron AI — autonomous personalization middleware",
+  title: "iteron",
   description: "The store that improves itself while you sleep. Analyst + Optimizer agents ship lifts in a 25-second loop.",
   icons: {
-    icon: "/iteron-i.png",
-    apple: "/iteron-i.png",
-    shortcut: "/iteron-i.png",
+    icon: "/iteron-favicon.png",
+    apple: "/iteron-favicon.png",
+    shortcut: "/iteron-favicon.png",
   },
 };
 

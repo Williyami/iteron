@@ -17,7 +17,15 @@
       "Bash(npx tsc *)",
       "Bash(echo \"exit=$?\")",
       "Bash(./node_modules/.bin/tsc --noEmit)",
-      "Bash(npx next *)"
+      "Bash(npx next *)",
+      "Bash(curl -sS -o /dev/null -w \"pageturn_8080=%{http_code}\\\\n\" --max-time 3 http://localhost:8080/)",
+      "Bash(curl -sS -o /dev/null -w \"dashboard_3000=%{http_code}\\\\n\" --max-time 3 http://localhost:3000/dashboard)",
+      "Bash(lsof -iTCP -sTCP:LISTEN -P)",
+      "Bash(curl -sI --max-time 3 http://localhost:8080/)",
+      "Bash(curl -s --max-time 3 http://localhost:8080/)",
+      "Bash(sips --getProperty pixelWidth --getProperty pixelHeight /Users/williameklund/iteron/dashboard/public/iteron-i.png)",
+      "Bash(sips -c 280 280 /Users/williameklund/iteron/dashboard/public/iteron-i.png --out /Users/williameklund/iteron/dashboard/public/iteron-favicon.png)",
+      "Bash(sips -c 280 280 /Users/williameklund/iteron/demo/public/iteron-i.png --out /Users/williameklund/iteron/demo/public/iteron-favicon.png)"
     ]
   }
 }
