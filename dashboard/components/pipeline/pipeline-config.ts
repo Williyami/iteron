@@ -8,9 +8,9 @@ export interface PipelineNodeConfig {
   y: number;
 }
 
-export const NODE_WIDTH = 168;
+export const NODE_WIDTH = 180;
 export const NODE_HEIGHT = 96;
-export const NODE_GAP = 32;
+export const NODE_GAP = 80;
 export const NODE_STEP = NODE_WIDTH + NODE_GAP;
 
 export const PIPELINE_CONFIG: PipelineNodeConfig[] = [

@@ -7,20 +7,31 @@ import { useStore } from "@/lib/store";
 
 interface Props {
   onStart: (goal: string) => void;
+  onPause: () => void;
+  onResume: () => void;
   onReset: () => void;
 }
 
-export function GoalBar({ onStart, onReset }: Props) {
-  const running        = useStore((s) => s.run.status === "running");
+export function GoalBar({ onStart, onPause, onResume, onReset }: Props) {
+  const runStatus      = useStore((s) => s.run.status);
+  const running        = runStatus === "running";
+  const paused         = runStatus === "paused";
+  const active         = running || paused;
   const demoSite       = useStore((s) => s.demoSite);
   const setDemoSite    = useStore((s) => s.setDemoSite);
   const setHistoryOpen = useStore((s) => s.setHistoryOpen);
 
-  const presets = PRESETS_BY_SITE[demoSite];
-  const [value, setValue]   = useState(presets[0]);
-  const [prompt, setPrompt] = useState("");
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => {
+    if (useStore.persist.hasHydrated()) { setHydrated(true); return; }
+    const unsub = useStore.persist.onFinishHydration(() => setHydrated(true));
+    return unsub;
+  }, []);
 
-  useEffect(() => { setValue(presets[0]); }, [demoSite, presets]);
+  const presets = PRESETS_BY_SITE[demoSite];
+  const [value, setValue] = useState("");
+
+  useEffect(() => { setValue(""); }, [demoSite]);
 
   // Detect which site a preset belongs to and switch demoSite accordingly
   const siteForPreset = (preset: string): "pageturn" | "novawear" => {
@@ -30,21 +41,14 @@ export function GoalBar({ onStart, onReset }: Props) {
   };
 
   const handleChip = (preset: string) => {
-    if (running) return;
+    if (active) return;
     const targetSite = siteForPreset(preset);
     if (targetSite !== demoSite) setDemoSite(targetSite);
     setValue(preset);
-    // Small delay so setDemoSite flushes to store before runDemoLoop reads it
-    setTimeout(() => onStart(preset), 50);
   };
 
   const handleStart = () => {
-    const goal = value.trim();
-    const customPrompt = prompt.trim();
-    const composed = customPrompt
-      ? `${goal || "Improve CTR across all segments"}\n\nAdditional prompt:\n${customPrompt}`
-      : goal;
-    onStart(composed);
+    onStart(value.trim());
   };
 
   return (
@@ -63,7 +67,7 @@ export function GoalBar({ onStart, onReset }: Props) {
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && !running) handleStart();
+              if (e.key === "Enter" && !active) handleStart();
             }}
             className="w-full bg-transparent text-ink focus:outline-none"
             style={{
@@ -73,62 +77,47 @@ export function GoalBar({ onStart, onReset }: Props) {
               letterSpacing: "-0.03em",
               fontWeight: 600,
             }}
-            placeholder="What should the loop optimize for?"
+            placeholder="Choose or write a goal…"
             aria-label="Optimization goal"
           />
-          <div className="mt-4">
-            <div
-              className="text-[12px] mb-2"
-              style={{ color: "var(--ink-faint)", fontWeight: 600 }}
-            >
-              Custom prompt
-            </div>
-            <textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              className="w-full resize-y rounded-xl bg-[var(--surface-2)] px-4 py-3 text-[14px] text-ink outline-none"
-              style={{
-                border: "1px solid var(--border)",
-                minHeight: "108px",
-                lineHeight: 1.6,
-              }}
-              placeholder="Add extra instructions for the agents, guardrails, or experiment context."
-              aria-label="Custom prompt"
-            />
-          </div>
-          <div className="flex items-center gap-2 mt-3 flex-wrap">
+          <div className="flex items-center gap-2 mt-4 flex-nowrap overflow-x-auto">
             <span
               className="text-[11px]"
               style={{ color: "var(--ink-faint)", fontWeight: 600 }}
             >
               Presets
             </span>
-            {presets.map((preset: string) => (
-              <button
-                key={preset}
-                type="button"
-                onClick={() => handleChip(preset)}
-                disabled={running}
-                className="text-[12px] px-3 py-1.5 transition-colors disabled:opacity-30 rounded-full"
-                style={{
-                  color: "var(--ink-muted)",
-                  border: "1px solid var(--border)",
-                  background: "var(--surface)",
-                }}
-                onMouseEnter={(e) => {
-                  if (!running) {
-                    e.currentTarget.style.borderColor = "var(--signal)";
-                    e.currentTarget.style.color = "var(--signal)";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "var(--border)";
-                  e.currentTarget.style.color = "var(--ink-muted)";
-                }}
-              >
-                {preset}
-              </button>
-            ))}
+            {hydrated && presets.map((preset: string) => {
+              const selected = value === preset;
+              return (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => handleChip(preset)}
+                  disabled={active}
+                  className="text-[12px] px-3 py-1.5 transition-colors disabled:opacity-30 rounded-full"
+                  style={{
+                    color: selected ? "var(--signal)" : "var(--ink-muted)",
+                    border: selected ? "1px solid var(--signal)" : "1px solid var(--border)",
+                    background: selected ? "var(--mint-2)" : "var(--surface)",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!active && !selected) {
+                      e.currentTarget.style.borderColor = "var(--signal)";
+                      e.currentTarget.style.color = "var(--signal)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!selected) {
+                      e.currentTarget.style.borderColor = "var(--border)";
+                      e.currentTarget.style.color = "var(--ink-muted)";
+                    }
+                  }}
+                >
+                  {preset}
+                </button>
+              );
+            })}
           </div>
             </div>
 
@@ -136,19 +125,33 @@ export function GoalBar({ onStart, onReset }: Props) {
               <button
                 type="button"
                 onClick={handleStart}
-                disabled={running}
+                disabled={active}
                 className={clsx(
                   "text-[14px] px-5 py-3 transition-colors rounded-lg",
-                  running ? "cursor-not-allowed" : "hover:opacity-90"
+                  active ? "cursor-not-allowed" : "hover:opacity-90"
                 )}
                 style={{
-                  background: running ? "var(--surface-2)" : "var(--signal)",
-                  color: running ? "var(--ink-faint)" : "var(--paper)",
-                  border: running ? "1px solid var(--border)" : "1px solid var(--signal)",
+                  background: active ? "var(--surface-2)" : "var(--signal)",
+                  color: active ? "var(--ink-faint)" : "var(--paper)",
+                  border: active ? "1px solid var(--border)" : "1px solid var(--signal)",
                   fontWeight: 600,
                 }}
               >
-                {running ? "Running..." : "Run loop"}
+                {running ? "Running..." : paused ? "Paused" : "Run loop"}
+              </button>
+
+              <button
+                type="button"
+                onClick={paused ? onResume : onPause}
+                disabled={!active}
+                className="text-[14px] px-4 py-3 transition-colors rounded-lg disabled:opacity-40 disabled:cursor-not-allowed"
+                style={{
+                  color: "var(--ink-muted)",
+                  border: "1px solid var(--border)",
+                  background: "var(--surface)",
+                }}
+              >
+                {paused ? "Resume" : "Pause"}
               </button>
 
               <button

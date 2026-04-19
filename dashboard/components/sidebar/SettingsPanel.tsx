@@ -198,7 +198,7 @@ export function SettingsPanel() {
           </div>
         </SettingRow>
         <SettingRow
-          label="Demo site"
+          label="Site"
           description="The storefront shown in the preview iframe. Switching sites resets segments and presets."
         >
           <div className="flex items-center gap-2">

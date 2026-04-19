@@ -262,7 +262,7 @@ const HomeView = () => (
     <div className="rounded-2xl bg-foreground p-10 text-center">
       <h2 className="text-2xl font-bold font-display text-background mb-2">Ready to let the agents work?</h2>
       <p className="text-background/55 mb-7 text-sm max-w-md mx-auto">
-        Click the Iteron button on the bookstore to run a live optimisation loop.
+        Press ⌘K on the bookstore and run a preset to launch a live optimisation loop.
       </p>
       <div className="flex gap-3 justify-center flex-wrap">
         <Link to="/browse" className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary/80">

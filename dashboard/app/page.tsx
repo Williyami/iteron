@@ -209,14 +209,16 @@ export default function Home() {
         </section>
 
         {/* Logo animation break */}
-        <section className="page-shell-wide py-0 flex justify-center">
+        <section className="page-shell-wide py-0">
           <div
             style={{
               width: "100%",
               maxWidth: 880,
-              aspectRatio: "880 / 260",
-              overflow: "hidden",
+              margin: "0 auto",
               position: "relative",
+              overflow: "hidden",
+              paddingTop: "29.5%",
+              contain: "layout paint",
             }}
           >
             <div

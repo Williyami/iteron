@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iteron — Interactive Demo Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #0f1f2e;
+      --ink-2: #1a2e42;
+      --signal: #1d9e75;
+      --mint: #e1f5ee;
+      --mint-2: #eef9f4;
+      --bone: #f8f8f6;
+      --paper: #ffffff;
+      --moss: #085041;
+      --rust: #dc2626;
+      --hairline: #e4ece8;
+      --hairline-strong: #cfdad4;
+      --border: #dde6e0;
+      --surface: #f4f7f5;
+      --surface-2: #eef2ef;
+      --ink-muted: #4c6172;
+      --ink-faint: #7c8c97;
+      --deep: #085041;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bone);
+      color: var(--ink);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top bar ── */
+    .top-bar {
+      height: 46px;
+      background: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      flex-shrink: 0;
+    }
+    .top-bar-logo {
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .top-bar-right { display: flex; align-items: center; gap: 12px; }
+    .top-bar-site {
+      font-size: 10px;
+      font-family: ui-monospace, monospace;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.1em;
+    }
+    .top-bar-pill {
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 4px 10px;
+      border-radius: 99px;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* ── Layout ── */
+    .main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      overflow: hidden;
+    }
+
+    /* ── Dashboard panel ── */
+    .dashboard-panel {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--hairline);
+      overflow: hidden;
+      background: var(--bone);
+    }
+
+    /* Goal section */
+    .goal-section {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--hairline);
+      background: var(--paper);
+    }
+    .eyebrow {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--deep);
+      margin-bottom: 6px;
+    }
+    .goal-input {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      border: none;
+      outline: none;
+      background: transparent;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+    .presets-row {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .presets-row::-webkit-scrollbar { display: none; }
+    .preset-chip {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--ink-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .preset-chip:hover { border-color: var(--signal); color: var(--signal); background: var(--mint-2); }
+    .preset-chip.active { border-color: var(--signal); color: var(--signal); background: var(--mint-2); }
+
+    /* Run controls */
+    .run-controls {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--hairline);
+      background: var(--paper);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .run-btn {
+      padding: 7px 18px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .btn-primary { background: var(--signal); color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: #178a62; }
+    .btn-primary:disabled { opacity: 0.5; cursor: default; }
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--ink-muted);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { color: var(--ink); border-color: var(--hairline-strong); }
+    .status-pill {
+      margin-left: auto;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      padding: 4px 10px;
+      border-radius: 99px;
+    }
+    .status-idle { background: var(--surface-2); color: var(--ink-faint); border: 1px solid var(--border); }
+    .status-running { background: var(--mint-2); color: var(--deep); border: 1px solid rgba(29,158,117,0.25); }
+    .status-complete { background: var(--mint-2); color: var(--deep); border: 1px solid rgba(29,158,117,0.25); }
+
+    /* Pipeline */
+    .pipeline-section {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--hairline);
+      background: var(--paper);
+    }
+    .pipeline-row {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .p-node {
+      flex: 1;
+      height: 68px;
+      border-radius: 10px;
+      border: 1px solid var(--hairline);
+      background: var(--bone);
+      padding: 9px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .p-node-fill {
+      position: absolute;
+      inset: 0;
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.7s cubic-bezier(0.3,0.7,0.2,1);
+      pointer-events: none;
+    }
+    .analyst .p-node-fill { background: color-mix(in oklch, #085041 10%, white); }
+    .optimizer .p-node-fill { background: color-mix(in oklch, #1d9e75 12%, white); }
+    .p-node.active { border-color: var(--signal); box-shadow: 0 6px 20px -10px var(--signal); }
+    .p-node.active.analyst { border-color: var(--moss); box-shadow: 0 6px 20px -10px var(--moss); }
+    .p-node.active .p-node-fill { transform: scaleX(0.45); }
+    .p-node.complete { border-color: var(--hairline-strong); background: var(--paper); }
+    .p-node.complete .p-node-fill { transform: scaleX(1); }
+    .p-node-top { display: flex; align-items: baseline; gap: 5px; position: relative; z-index: 1; }
+    .p-num { font-size: 8px; font-family: ui-monospace, monospace; color: var(--ink-faint); }
+    .p-label { font-size: 11px; font-weight: 500; color: var(--ink); }
+    .p-bottom { display: flex; justify-content: space-between; position: relative; z-index: 1; }
+    .p-agent { font-size: 7px; font-family: ui-monospace, monospace; text-transform: uppercase; letter-spacing: 0.14em; }
+    .analyst .p-agent { color: var(--moss); }
+    .optimizer .p-agent { color: var(--signal); }
+    .p-state { font-size: 7px; font-family: ui-monospace, monospace; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-faint); }
+    .p-state.run { color: var(--signal); }
+    .p-state.done { color: var(--ink-muted); }
+    .p-edge {
+      width: 24px;
+      flex-shrink: 0;
+      height: 1px;
+      background: var(--hairline);
+      position: relative;
+    }
+    .p-edge::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 1s cubic-bezier(0.3,0.7,0.2,1);
+    }
+    .p-edge.filled::after { transform: scaleX(1); }
+
+    /* Thoughts */
+    .thoughts-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .thoughts-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 20px;
+      border-bottom: 1px solid var(--hairline);
+      background: var(--paper);
+      flex-shrink: 0;
+    }
+    .thoughts-label {
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--ink-faint);
+    }
+    .thoughts-log {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .thoughts-log::-webkit-scrollbar { width: 3px; }
+    .thoughts-log::-webkit-scrollbar-thumb { background: var(--hairline-strong); border-radius: 2px; }
+    .thought-idle {
+      font-size: 10px;
+      font-family: ui-monospace, monospace;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      letter-spacing: 0.18em;
+      padding: 4px 0;
+    }
+    .thought-entry {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      padding: 4px 0;
+      opacity: 0;
+      transform: translateY(4px);
+      animation: tIn 0.22s ease forwards;
+    }
+    @keyframes tIn { to { opacity: 1; transform: none; } }
+    .t-ts { font-size: 9px; font-family: ui-monospace, monospace; color: var(--ink-faint); letter-spacing: 0.06em; width: 58px; flex-shrink: 0; }
+    .t-agent { font-size: 7px; font-family: ui-monospace, monospace; text-transform: uppercase; letter-spacing: 0.16em; width: 52px; flex-shrink: 0; }
+    .t-agent.analyst { color: var(--moss); }
+    .t-agent.optimizer { color: var(--signal); }
+    .t-text { font-size: 13px; color: var(--ink); line-height: 1.5; letter-spacing: -0.005em; }
+
+    /* ── Store panel ── */
+    .store-panel {
+      display: flex;
+      flex-direction: column;
+      padding: 14px;
+      overflow: hidden;
+    }
+    .browser-chrome {
+      background: var(--paper);
+      border: 1px solid var(--hairline);
+      border-radius: 8px 8px 0 0;
+      border-bottom: none;
+      padding: 7px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .browser-dots { display: flex; gap: 5px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot:nth-child(1) { background: #ff5f57; }
+    .dot:nth-child(2) { background: #febc2e; }
+    .dot:nth-child(3) { background: #28c840; }
+    .url-bar {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--hairline);
+      border-radius: 4px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-family: ui-monospace, monospace;
+      color: var(--ink-muted);
+    }
+    .store-viewport {
+      flex: 1;
+      border: 1px solid var(--hairline);
+      border-radius: 0 0 8px 8px;
+      overflow-y: auto;
+      background: #FAF9F7;
+      position: relative;
+    }
+    .store-viewport::-webkit-scrollbar { width: 4px; }
+    .store-viewport::-webkit-scrollbar-thumb { background: #D0CBC4; border-radius: 2px; }
+
+    /* ── NovaWear store ── */
+    .nw { font-family: 'Inter', system-ui, sans-serif; background: #FAF9F7; }
+
+    .nw-nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: #FAF9F7;
+      border-bottom: 1px solid #E8E4DF;
+      padding: 12px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nw-logo { font-size: 12px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: #111; }
+    .nw-nav-links { display: flex; gap: 20px; }
+    .nw-nav-link { font-size: 12px; color: #555; letter-spacing: 0.04em; cursor: pointer; }
+    .nw-nav-icons { display: flex; gap: 12px; }
+
+    /* Hero strip */
+    .nw-hero {
+      padding: 16px 28px;
+      border-bottom: 1px solid #E8E4DF;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      transition: all 0.4s;
+    }
+    .nw-eyebrow { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.22em; color: #888; margin-bottom: 4px; }
+    .nw-h1 { font-family: Georgia, 'Times New Roman', serif; font-size: 20px; color: #111; line-height: 1.1; }
+    .nw-btns { display: flex; gap: 8px; flex-shrink: 0; }
+    .nw-btn-dk { background: #111; color: #FAF9F7; border: none; cursor: pointer; padding: 8px 18px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; }
+    .nw-btn-ol { background: transparent; color: #111; border: 1px solid #D0CBC4; cursor: pointer; padding: 8px 18px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; }
+
+    /* Editorial hero */
+    .nw-editorial {
+      display: none;
+      border-bottom: 1px solid #E8E4DF;
+    }
+    .nw-editorial.show {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      min-height: 320px;
+      animation: fadeUp 0.5s ease forwards;
+    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    .nw-ed-img { position: relative; overflow: hidden; background: #F0EEEB; }
+    .nw-ed-img img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .nw-ed-badge {
+      position: absolute; top: 12px; left: 12px;
+      background: rgba(255,255,255,0.94); color: #111;
+      font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em;
+      padding: 4px 10px;
+    }
+    .nw-ed-copy {
+      background: #111; color: #FAF9F7;
+      padding: 36px 32px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .nw-ed-eyebrow { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.22em; color: #555; margin-bottom: 12px; }
+    .nw-ed-h2 { font-family: Georgia, serif; font-size: 22px; color: #FAF9F7; line-height: 1.05; margin-bottom: 12px; }
+    .nw-ed-body { font-size: 11px; color: #777; line-height: 1.7; max-width: 26ch; margin-bottom: 18px; }
+    .nw-ed-price { font-family: Georgia, serif; font-size: 20px; color: #FAF9F7; margin-bottom: 20px; }
+    .nw-ed-cta { background: #FAF9F7; color: #111; border: none; cursor: pointer; padding: 10px 24px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; align-self: flex-start; }
+
+    /* Optimised Women's section */
+    .nw-opt-womens {
+      display: none;
+      padding: 20px 28px;
+      border-bottom: 1px solid #E8E4DF;
+    }
+    .nw-opt-womens.show {
+      display: block;
+      animation: fadeUp 0.5s 0.15s ease both;
+    }
+    .nw-opt-label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.18em; color: #1d9e75; margin-bottom: 4px; }
+    .nw-sec-h2 { font-family: Georgia, serif; font-size: 22px; color: #111; margin-bottom: 14px; }
+    .nw-sec-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 14px; }
+    .nw-sec-link { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: #111; border-bottom: 1px solid #111; cursor: pointer; }
+
+    /* Gender tiles */
+    .nw-gender { padding: 22px 28px; }
+    .nw-gender-eyebrow { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.18em; color: #888; margin-bottom: 6px; }
+    .nw-gender-h2 { font-family: Georgia, serif; font-size: 28px; color: #111; margin-bottom: 14px; }
+    .nw-gender-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .nw-tile {
+      position: relative; overflow: hidden; aspect-ratio: 3/2; cursor: pointer;
+      transition: outline 0.15s;
+    }
+    .nw-tile img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.5s; }
+    .nw-tile:hover img { transform: scale(1.04); }
+    .nw-tile-grad { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 55%); }
+    .nw-tile-text { position: absolute; bottom: 14px; left: 14px; color: #FAF9F7; }
+    .nw-tile-sub { font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.18em; opacity: 0.85; margin-bottom: 4px; }
+    .nw-tile-title { font-family: Georgia, serif; font-size: 26px; line-height: 1; margin-bottom: 8px; }
+    .nw-tile-cta { font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; border-bottom: 1px solid rgba(250,249,247,0.5); padding-bottom: 1px; }
+
+    /* Product grids */
+    .nw-products { padding: 20px 28px; border-top: 1px solid #E8E4DF; }
+    .nw-prod-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
+    .nw-prod-card { cursor: pointer; }
+    .nw-prod-img { position: relative; aspect-ratio: 3/4; overflow: hidden; background: #F0EEEB; }
+    .nw-prod-img img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.5s; }
+    .nw-prod-card:hover .nw-prod-img img { transform: scale(1.04); }
+    .nw-prod-badge {
+      position: absolute; top: 7px; left: 7px;
+      background: rgba(255,255,255,0.93); color: #111;
+      font-size: 7px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em;
+      padding: 3px 6px; display: none;
+    }
+    .nw-prod-name { font-size: 11px; font-weight: 500; color: #111; letter-spacing: -0.01em; margin-top: 7px; }
+    .nw-prod-price { font-size: 11px; color: #111; margin-top: 2px; }
+
+    /* Featured wide card */
+    .nw-feat-card { cursor: pointer; }
+    .nw-feat-img { position: relative; aspect-ratio: 16/9; overflow: hidden; background: #F0EEEB; }
+    .nw-feat-img img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .nw-feat-badge {
+      position: absolute; top: 10px; left: 10px;
+      background: rgba(255,255,255,0.93); color: #111;
+      font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em;
+      padding: 4px 8px;
+    }
+    .nw-feat-name { font-size: 12px; font-weight: 500; color: #111; margin-top: 8px; }
+    .nw-feat-price { font-size: 12px; color: #111; margin-top: 2px; }
+    .nw-opt-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; }
+
+    /* Scan overlay */
+    .scan-overlay {
+      display: none;
+      position: absolute; inset: 0;
+      pointer-events: none; z-index: 100;
+    }
+    .scan-overlay.on { display: block; }
+    .scan-line {
+      position: absolute; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent 0%, #2563eb 25%, #2563eb 75%, transparent 100%);
+      box-shadow: 0 0 18px 4px rgba(37,99,235,0.4);
+      animation: scanAnim 2.8s ease-in-out infinite;
+    }
+    @keyframes scanAnim {
+      0%   { top: 0; opacity: 0; }
+      5%   { opacity: 1; }
+      90%  { top: 100%; opacity: 1; }
+      100% { top: 100%; opacity: 0; }
+    }
+    .scan-corner { position: absolute; width: 14px; height: 14px; }
+    .sc-tl { top: 8px; left: 8px; border-top: 1.5px solid rgba(37,99,235,0.5); border-left: 1.5px solid rgba(37,99,235,0.5); }
+    .sc-tr { top: 8px; right: 8px; border-top: 1.5px solid rgba(37,99,235,0.5); border-right: 1.5px solid rgba(37,99,235,0.5); }
+    .sc-bl { bottom: 8px; left: 8px; border-bottom: 1.5px solid rgba(37,99,235,0.5); border-left: 1.5px solid rgba(37,99,235,0.5); }
+    .sc-br { bottom: 8px; right: 8px; border-bottom: 1.5px solid rgba(37,99,235,0.5); border-right: 1.5px solid rgba(37,99,235,0.5); }
+
+    @keyframes hpulse {
+      0%,100% { outline: 2px solid rgba(37,99,235,0.7); outline-offset: 2px; box-shadow: 0 0 12px 2px rgba(37,99,235,0.25); }
+      50%      { outline: 2px solid rgba(37,99,235,1);   outline-offset: 2px; box-shadow: 0 0 22px 5px rgba(37,99,235,0.45); }
+    }
+    .scanning [data-scan-target] { animation: hpulse 1.5s ease-in-out infinite; }
+
+    /* Applying overlay */
+    .applying-overlay {
+      display: none;
+      position: absolute; inset: 0;
+      background: rgba(248,248,246,0.78);
+      backdrop-filter: saturate(0.75) blur(1px);
+      z-index: 80;
+      align-items: center; justify-content: center;
+    }
+    .applying-overlay.on { display: flex; }
+    .applying-inner { text-align: center; }
+    .applying-text { font-size: 18px; font-weight: 600; font-style: italic; color: var(--ink); letter-spacing: -0.02em; }
+    .applying-text em { color: #1d9e75; font-style: inherit; }
+    .applying-sub { font-size: 9px; font-family: ui-monospace, monospace; text-transform: uppercase; letter-spacing: 0.28em; color: var(--ink-muted); margin-top: 6px; }
+  </style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="top-bar">
+  <span class="top-bar-logo">Iteron</span>
+  <div class="top-bar-right">
+    <span class="top-bar-site">novawear · localhost:8080</span>
+    <span class="top-bar-pill">Demo Mode</span>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ── Dashboard panel ── -->
+  <div class="dashboard-panel">
+
+    <!-- Goal bar -->
+    <div class="goal-section">
+      <div class="eyebrow">Optimization Goal</div>
+      <input class="goal-input" id="goal-input" value="Boost Women's collection CTR" readonly />
+      <div class="presets-row">
+        <button class="preset-chip active" onclick="selectPreset(this,'womens')">Boost Women's CTR</button>
+        <button class="preset-chip" onclick="selectPreset(this,'mens')">Boost Men's CTR</button>
+        <button class="preset-chip" onclick="selectPreset(this,'sale')">Boost Sale conversion</button>
+        <button class="preset-chip" onclick="selectPreset(this,'accessories')">Accessories cart rate</button>
+      </div>
+    </div>
+
+    <!-- Run controls -->
+    <div class="run-controls">
+      <button class="run-btn btn-primary" id="run-btn" onclick="handleRun()">▶ Run loop</button>
+      <button class="run-btn btn-secondary" onclick="handleReset()">Reset</button>
+      <span class="status-pill status-idle" id="status-pill">Idle</span>
+    </div>
+
+    <!-- Pipeline -->
+    <div class="pipeline-section">
+      <div class="eyebrow">Agent execution · Live pipeline</div>
+      <div class="pipeline-row">
+        <div class="p-node analyst" id="n0"><div class="p-node-fill"></div>
+          <div class="p-node-top"><span class="p-num">01</span><span class="p-label">fetch data</span></div>
+          <div class="p-bottom"><span class="p-agent">analyst</span><span class="p-state" id="s0">idle</span></div>
+        </div>
+        <div class="p-edge" id="e0"></div>
+        <div class="p-node analyst" id="n1"><div class="p-node-fill"></div>
+          <div class="p-node-top"><span class="p-num">02</span><span class="p-label">diagnose</span></div>
+          <div class="p-bottom"><span class="p-agent">analyst</span><span class="p-state" id="s1">idle</span></div>
+        </div>
+        <div class="p-edge" id="e1"></div>
+        <div class="p-node optimizer" id="n2"><div class="p-node-fill"></div>
+          <div class="p-node-top"><span class="p-num">03</span><span class="p-label">gen config</span></div>
+          <div class="p-bottom"><span class="p-agent">optimizer</span><span class="p-state" id="s2">idle</span></div>
+        </div>
+        <div class="p-edge" id="e2"></div>
+        <div class="p-node optimizer" id="n3"><div class="p-node-fill"></div>
+          <div class="p-node-top"><span class="p-num">04</span><span class="p-label">setup a/b</span></div>
+          <div class="p-bottom"><span class="p-agent">optimizer</span><span class="p-state" id="s3">idle</span></div>
+        </div>
+        <div class="p-edge" id="e3"></div>
+        <div class="p-node optimizer" id="n4"><div class="p-node-fill"></div>
+          <div class="p-node-top"><span class="p-num">05</span><span class="p-label">measure</span></div>
+          <div class="p-bottom"><span class="p-agent">optimizer</span><span class="p-state" id="s4">idle</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Thought stream -->
+    <div class="thoughts-section">
+      <div class="thoughts-header">
+        <span class="thoughts-label">Live log · auto-scroll</span>
+        <span class="thoughts-label" id="t-count">00 events</span>
+      </div>
+      <div class="thoughts-log" id="t-log">
+        <div class="thought-idle">// idle — press run loop</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Store panel ── -->
+  <div class="store-panel">
+    <div class="browser-chrome">
+      <div class="browser-dots">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="url-bar">localhost:8080/novawear</div>
+    </div>
+    <div class="store-viewport" id="store-vp">
+
+      <!-- Scan overlay -->
+      <div class="scan-overlay" id="scan-ov">
+        <div class="scan-line"></div>
+        <div class="scan-corner sc-tl"></div>
+        <div class="scan-corner sc-tr"></div>
+        <div class="scan-corner sc-bl"></div>
+        <div class="scan-corner sc-br"></div>
+      </div>
+
+      <!-- Applying overlay -->
+      <div class="applying-overlay" id="apply-ov">
+        <div class="applying-inner">
+          <div class="applying-text">applying <em>config</em></div>
+          <div class="applying-sub">· live on novawear</div>
+        </div>
+      </div>
+
+      <!-- NovaWear content -->
+      <div class="nw" id="store">
+
+        <!-- Nav -->
+        <div class="nw-nav">
+          <div style="display:flex;align-items:center;gap:28px">
+            <span class="nw-logo">NovaWear</span>
+            <div class="nw-nav-links">
+              <span class="nw-nav-link">Women</span>
+              <span class="nw-nav-link">Men</span>
+              <span class="nw-nav-link">Sale</span>
+              <span class="nw-nav-link">New</span>
+            </div>
+          </div>
+          <div class="nw-nav-icons">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          </div>
+        </div>
+
+        <!-- Editorial hero — hidden by default -->
+        <div class="nw-editorial" id="editorial">
+          <div class="nw-ed-img">
+            <img src="https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/assets/product-blazer-women.jpg" alt="Inès Blazer" />
+            <span class="nw-ed-badge">New</span>
+          </div>
+          <div class="nw-ed-copy">
+            <p class="nw-ed-eyebrow">Women · Now featuring</p>
+            <h2 class="nw-ed-h2">Inès Single-Breasted Blazer</h2>
+            <p class="nw-ed-body">Elevated to the front of our Women's collection after outperforming every other piece in click-through testing.</p>
+            <p class="nw-ed-price">$365</p>
+            <button class="nw-ed-cta">Shop Women's</button>
+          </div>
+        </div>
+
+        <!-- Hero strip -->
+        <div class="nw-hero">
+          <div>
+            <p class="nw-eyebrow" id="h-eyebrow">Spring / Summer 2026</p>
+            <h1 class="nw-h1" id="h-headline">A quieter<br>way to dress.</h1>
+          </div>
+          <div class="nw-btns">
+            <button class="nw-btn-dk" id="h-cta">Shop the collection</button>
+            <button class="nw-btn-ol">Explore outerwear</button>
+          </div>
+        </div>
+
+        <!-- Optimised Women's — hidden by default, hoisted above gender tiles -->
+        <div class="nw-opt-womens" id="opt-womens">
+          <div class="nw-sec-header">
+            <div>
+              <p class="nw-opt-label">Optimized · Women · New in</p>
+              <h2 class="nw-sec-h2">For her</h2>
+            </div>
+            <span class="nw-sec-link">Shop Women →</span>
+          </div>
+          <div class="nw-opt-grid">
+            <div class="nw-feat-card" data-scan-target>
+              <div class="nw-feat-img">
+                <img src="https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/assets/product-blazer-women.jpg" alt="Inès Blazer" />
+                <span class="nw-feat-badge">New</span>
+              </div>
+              <div class="nw-feat-name">Inès Single-Breasted Blazer</div>
+              <div class="nw-feat-price">$365</div>
+            </div>
+            <div class="nw-prod-card" data-scan-target>
+              <div class="nw-prod-img"><img src="https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/assets/product-coat.jpg" alt="Atlas Trench" /></div>
+              <div class="nw-prod-name">Atlas Wool Trench</div>
+              <div class="nw-prod-price">$489</div>
+            </div>
+            <div class="nw-prod-card" data-scan-target>
+              <div class="nw-prod-img"><img src="https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/assets/product-knit.jpg" alt="Cashmere Knit" /></div>
+              <div class="nw-prod-name">Ovo Cashmere Knit</div>
+              <div class="nw-prod-price">$245</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shop by gender -->
+        <div class="nw-gender">
+          <p class="nw-gender-eyebrow">Shop by</p>
+          <h2 class="nw-gender-h2">Women &amp; Men.</h2>
+          <div class="nw-gender-grid">
+            <div class="nw-tile" data-scan-target>
+              <img src="https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/assets/collection-summer.jpg" alt="Women" />
+              <div class="nw-tile-grad"></div>
+              <div class="nw-tile-text">
+                <p class="nw-tile-sub">Spring / Summer 2026</p>
+                <h3 class="nw-tile-title">Women</h3>
+                <span class="nw-tile-cta">Discover →</span>
+              </div>
+            </div>
+            <div class="nw-tile" data-scan-target>
+              <img src="https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/assets/category-men.jpg" alt="Men" />
+              <div class="nw-tile-grad"></div>
+              <div class="nw-tile-text">
+                <p class="nw-tile-sub">The new tailored edit</p>
+                <h3 class="nw-tile-title">Men</h3>
+                <span class="nw-tile-cta">Discover →</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Women's products -->
+        <div class="nw-products">
+          <div class="nw-sec-header">
+            <div>
+              <p class="nw-eyebrow">Women · New in</p>
+              <h2 class="nw-sec-h2">For her</h2>
+            </div>
+            <span class="nw-sec-link">Shop Women →</span>
+          </div>
+          <div class="nw-prod-grid">
+            <div class="nw-prod-card" data-scan-target>
+              <div class="nw-prod-img">
+                <img src="https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/assets/product-blazer-women.jpg" alt="Inès Blazer" />
+                <span class="nw-prod-badge" id="blazer-badge">New</span>
+              </div>
+              <div class="nw-prod-name">Inès Single-Breasted Blazer</div>
+              <div class="nw-prod-price">$365</div>
+            </div>
+            <div class="nw-prod-card" data-scan-target>
+              <div class="nw-prod-img"><img src="https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/assets/product-coat.jpg" alt="Atlas Trench" /></div>
+              <div class="nw-prod-name">Atlas Wool Trench</div>
+              <div class="nw-prod-price">$489</div>
+            </div>
+            <div class="nw-prod-card" data-scan-target>
+              <div class="nw-prod-img"><img src="https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/assets/product-knit.jpg" alt="Cashmere Knit" /></div>
+              <div class="nw-prod-name">Ovo Cashmere Knit</div>
+              <div class="nw-prod-price">$245</div>
+            </div>
+            <div class="nw-prod-card" data-scan-target>
+              <div class="nw-prod-img"><img src="https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/assets/product-dress-slip.jpg" alt="Slip Dress" /></div>
+              <div class="nw-prod-name">Lyre Silk Slip Dress</div>
+              <div class="nw-prod-price">$285</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Men's products -->
+        <div class="nw-products">
+          <div class="nw-sec-header">
+            <div>
+              <p class="nw-eyebrow">Men · New in</p>
+              <h2 class="nw-sec-h2">For him</h2>
+            </div>
+            <span class="nw-sec-link">Shop Men →</span>
+          </div>
+          <div class="nw-prod-grid">
+            <div class="nw-prod-card" data-scan-target>
+              <div class="nw-prod-img"><img src="https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/assets/product-blazer-men.jpg" alt="Vance Blazer" /></div>
+              <div class="nw-prod-name">Vance Double-Breasted Blazer</div>
+              <div class="nw-prod-price">$525</div>
+            </div>
+            <div class="nw-prod-card" data-scan-target>
+              <div class="nw-prod-img"><img src="https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/assets/product-shirt-men.jpg" alt="Halden Shirt" /></div>
+              <div class="nw-prod-name">Halden Oxford Shirt</div>
+              <div class="nw-prod-price">$145</div>
+            </div>
+            <div class="nw-prod-card" data-scan-target>
+              <div class="nw-prod-img"><img src="https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/assets/product-loafers.jpg" alt="Milan Loafer" /></div>
+              <div class="nw-prod-name">Milan Penny Loafer</div>
+              <div class="nw-prod-price">$425</div>
+            </div>
+            <div class="nw-prod-card" data-scan-target>
+              <div class="nw-prod-img"><img src="https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/assets/product-overcoat-men.jpg" alt="Holt Overcoat" /></div>
+              <div class="nw-prod-name">Holt Wool Overcoat</div>
+              <div class="nw-prod-price">$685</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /store -->
+    </div><!-- /store-viewport -->
+  </div><!-- /store-panel -->
+</div><!-- /main -->
+
+<script>
+const A = 'https://raw.githubusercontent.com/wilhelmomnell/novawear-e-commerce-design/main/src/assets';
+
+const PRESETS = {
+  womens: {
+    goal: "Boost Women's collection CTR",
+    thoughts: [
+      { t: 400,  a: 'analyst',   tx: "Fetching Women's sessions — last 24h" },
+      { t: 900,  a: 'analyst',   tx: "Womens CTR: 1.4% (lowest) · 58% of sessions" },
+      { t: 1400, a: 'analyst',   tx: "Women's = 58% of sessions, only 28% of revenue" },
+      { t: 2100, a: 'analyst',   tx: "Root cause: Inès Blazer buried at position 4" },
+      { t: 2900, a: 'optimizer', tx: "Config: pin ines-blazer to position 1 with 'New' badge" },
+      { t: 3600, a: 'optimizer', tx: "Default tab: Women's · editorial hero headline" },
+      { t: 4300, a: 'optimizer', tx: "50/50 split · editorial layout vs current" },
+      { t: 5000, a: 'optimizer', tx: "Pinned CTR: 4.1% vs control 1.4% — strong early signal" },
+      { t: 5700, a: 'optimizer', tx: "Segment CTR 2.1% · +50% lift · confidence 98.1%" },
+      { t: 6200, a: 'optimizer', tx: "Final: 1.4% → 2.1% · scaling to 100%" },
+      { t: 6700, a: 'optimizer', tx: "✓ Women's now leads with its top performer." },
+    ],
+    nodes: [
+      { on: 200,  off: 1700 },
+      { on: 1800, off: 2800 },
+      { on: 2900, off: 3900 },
+      { on: 4000, off: 5000 },
+      { on: 5100, off: 6500 },
+    ],
+    applyAt: 6600,
+    config: {
+      eyebrow: 'New in',
+      headline: 'The pieces<br>that define a season.',
+      cta: 'Explore new arrivals',
+      editorial: true,
+      optWomens: true,
+      blazerBadge: true,
+    },
+  },
+  mens: {
+    goal: "Boost Men's collection CTR",
+    thoughts: [
+      { t: 400,  a: 'analyst',   tx: "Loading Men's — sessions, bounce, engagement heatmap" },
+      { t: 900,  a: 'analyst',   tx: "Mens: 1.8% CTR · 64% bounce · 18s avg dwell time" },
+      { t: 1500, a: 'analyst',   tx: "Root cause: Vance Blazer sits at position 3" },
+      { t: 2200, a: 'optimizer', tx: "Config: pin vance-blazer to pos 1, Men's hero variant" },
+      { t: 3100, a: 'optimizer', tx: "Headline: 'Considered pieces for considered dressing'" },
+      { t: 4100, a: 'optimizer', tx: "A/B: current layout vs editorial-first config" },
+      { t: 5000, a: 'optimizer', tx: "Bounce dropping: test 48% vs control 64% at n=290" },
+      { t: 5700, a: 'optimizer', tx: "CTR: 2.6% test vs 1.8% · p=0.031 · n=640" },
+      { t: 6300, a: 'optimizer', tx: "✓ Men's now leads with its most compelling piece." },
+    ],
+    nodes: [
+      { on: 200,  off: 1700 },
+      { on: 1800, off: 2800 },
+      { on: 2900, off: 3900 },
+      { on: 4000, off: 5000 },
+      { on: 5100, off: 6200 },
+    ],
+    applyAt: 6300,
+    config: {
+      eyebrow: 'Men · New tailored edit',
+      headline: 'Considered pieces<br>for considered dressing.',
+      cta: "Shop Men's",
+    },
+  },
+  sale: {
+    goal: "Boost Sale segment conversion",
+    thoughts: [
+      { t: 400,  a: 'analyst',   tx: "Fetching Sale funnel data — last 72 hours" },
+      { t: 900,  a: 'analyst',   tx: "Sale: 4.8% CTR · 1.8% conversion · high intent, weak purchase" },
+      { t: 1600, a: 'analyst',   tx: "Root cause: no urgency signals, generic CTA" },
+      { t: 2400, a: 'optimizer', tx: "Config: urgency banner + strong CTA + Sale tab default" },
+      { t: 3300, a: 'optimizer', tx: "CTA override: 'Shop now — ends tonight'" },
+      { t: 4200, a: 'optimizer', tx: "A/B: standard vs urgency layout on Sale segment" },
+      { t: 5100, a: 'optimizer', tx: "Conversion: 3.1% test vs 1.8% control — strong signal" },
+      { t: 5900, a: 'optimizer', tx: "Final: +61.9% lift · scaling to 100% of Sale traffic" },
+      { t: 6300, a: 'optimizer', tx: "✓ Sale page now converts with urgency-driven layout." },
+    ],
+    nodes: [
+      { on: 200,  off: 1700 },
+      { on: 1800, off: 2800 },
+      { on: 2900, off: 3900 },
+      { on: 4000, off: 5000 },
+      { on: 5100, off: 6200 },
+    ],
+    applyAt: 6300,
+    config: {
+      eyebrow: 'Sale — up to 40% off',
+      headline: "Now at its<br>best price.",
+      cta: 'Shop sale — ends tonight',
+    },
+  },
+  accessories: {
+    goal: "Boost Accessories cart-add rate",
+    thoughts: [
+      { t: 400,  a: 'analyst',   tx: "Pulling accessories funnel — cart events and scroll depth" },
+      { t: 900,  a: 'analyst',   tx: "Accessories: 0.8% cart rate · scroll depth 34%" },
+      { t: 1600, a: 'analyst',   tx: "Root cause: no cross-sell, no prominence, buried section" },
+      { t: 2400, a: 'optimizer', tx: "Config: pin orion-belt, 'Limited' badge, cross-sell" },
+      { t: 3300, a: 'optimizer', tx: "Cross-sell at scroll 60% — proven optimal in prior tests" },
+      { t: 4200, a: 'optimizer', tx: "Belt views up 8× in test · 'Limited' badge driving urgency" },
+      { t: 5000, a: 'optimizer', tx: "Cart rate: 1.4% test vs 0.8% control · p=0.028" },
+      { t: 5800, a: 'optimizer', tx: "Final: +75% cart rate · scaling to 100%" },
+      { t: 6300, a: 'optimizer', tx: "✓ Accessories now discoverable at peak intent moments." },
+    ],
+    nodes: [
+      { on: 200,  off: 1700 },
+      { on: 1800, off: 2800 },
+      { on: 2900, off: 3900 },
+      { on: 4000, off: 5000 },
+      { on: 5100, off: 6200 },
+    ],
+    applyAt: 6300,
+    config: {
+      eyebrow: 'New in · Accessories',
+      headline: "The details<br>that complete a look.",
+      cta: 'Shop Accessories',
+    },
+  },
+};
+
+let activeKey = 'womens';
+let timers = [];
+let running = false;
+let tCount = 0;
+let t0 = 0;
+
+function selectPreset(el, key) {
+  if (running) return;
+  activeKey = key;
+  document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('goal-input').value = PRESETS[key].goal;
+}
+
+function fmtT(ms) {
+  const s = Math.floor(ms / 1000);
+  const cs = String(Math.floor((ms % 1000) / 10)).padStart(2,'0');
+  const ss = String(s % 60).padStart(2,'0');
+  const mm = String(Math.floor(s / 60)).padStart(2,'0');
+  return `+${mm}:${ss}.${cs}`;
+}
+
+function addThought(agent, text) {
+  const log = document.getElementById('t-log');
+  if (tCount === 0) log.innerHTML = '';
+  tCount++;
+  const el = document.createElement('div');
+  el.className = 'thought-entry';
+  el.innerHTML = `<span class="t-ts">${fmtT(performance.now()-t0)}</span><span class="t-agent ${agent}">${agent==='analyst'?'analyst':'optim'}</span><span class="t-text">${text}</span>`;
+  log.appendChild(el);
+  document.getElementById('t-count').textContent = String(tCount).padStart(2,'0') + ' events';
+  log.scrollTop = log.scrollHeight;
+}
+
+function setNode(i, state) {
+  const n = document.getElementById('n'+i);
+  const s = document.getElementById('s'+i);
+  n.classList.remove('active','complete');
+  if (state==='active') { n.classList.add('active'); s.textContent='run'; s.className='p-state run'; }
+  else if (state==='complete') { n.classList.add('complete'); s.textContent='done'; s.className='p-state done'; }
+  else { s.textContent='idle'; s.className='p-state'; }
+}
+
+function setEdge(i, on) {
+  const e = document.getElementById('e'+i);
+  if (e) e.classList.toggle('filled', on);
+}
+
+function handleRun() {
+  if (running) return;
+  running = true;
+  t0 = performance.now();
+  tCount = 0;
+
+  const p = PRESETS[activeKey];
+  const btn = document.getElementById('run-btn');
+  const pill = document.getElementById('status-pill');
+
+  btn.disabled = true;
+  btn.textContent = '● Running';
+  pill.textContent = '● Running';
+  pill.className = 'status-pill status-running';
+
+  document.getElementById('t-log').innerHTML = '';
+  document.getElementById('t-count').textContent = '00 events';
+  for (let i=0;i<5;i++) setNode(i,'idle');
+  for (let i=0;i<4;i++) setEdge(i,false);
+
+  // Scanning
+  document.getElementById('scan-ov').classList.add('on');
+  document.getElementById('store').classList.add('scanning');
+
+  // Thoughts
+  p.thoughts.forEach(({t, a, tx}) => timers.push(setTimeout(() => addThought(a, tx), t)));
+
+  // Pipeline nodes
+  p.nodes.forEach((timing, i) => {
+    timers.push(setTimeout(() => setNode(i,'active'), timing.on));
+    timers.push(setTimeout(() => { setNode(i,'complete'); if(i<4) setEdge(i,true); }, timing.off));
+  });
+
+  // Stop scanning, show applying
+  timers.push(setTimeout(() => {
+    document.getElementById('scan-ov').classList.remove('on');
+    document.getElementById('store').classList.remove('scanning');
+    document.getElementById('apply-ov').classList.add('on');
+  }, p.applyAt - 400));
+
+  // Apply config
+  timers.push(setTimeout(() => {
+    document.getElementById('apply-ov').classList.remove('on');
+    applyConfig(p.config);
+    pill.textContent = 'Complete';
+    pill.className = 'status-pill status-complete';
+    btn.textContent = '✓ Complete';
+    running = false;
+  }, p.applyAt));
+}
+
+function applyConfig(cfg) {
+  if (cfg.eyebrow) document.getElementById('h-eyebrow').textContent = cfg.eyebrow;
+  if (cfg.headline) document.getElementById('h-headline').innerHTML = cfg.headline;
+  if (cfg.cta) document.getElementById('h-cta').textContent = cfg.cta;
+  if (cfg.editorial) document.getElementById('editorial').classList.add('show');
+  if (cfg.optWomens) document.getElementById('opt-womens').classList.add('show');
+  if (cfg.blazerBadge) document.getElementById('blazer-badge').style.display = 'block';
+}
+
+function handleReset() {
+  running = false;
+  timers.forEach(clearTimeout); timers = [];
+  tCount = 0;
+
+  for (let i=0;i<5;i++) setNode(i,'idle');
+  for (let i=0;i<4;i++) setEdge(i,false);
+
+  document.getElementById('scan-ov').classList.remove('on');
+  document.getElementById('apply-ov').classList.remove('on');
+  document.getElementById('store').classList.remove('scanning');
+  document.getElementById('editorial').classList.remove('show');
+  document.getElementById('opt-womens').classList.remove('show');
+  document.getElementById('blazer-badge').style.display = 'none';
+  document.getElementById('h-eyebrow').textContent = 'Spring / Summer 2026';
+  document.getElementById('h-headline').innerHTML = 'A quieter<br>way to dress.';
+  document.getElementById('h-cta').textContent = 'Shop the collection';
+
+  document.getElementById('t-log').innerHTML = '<div class="thought-idle">// idle — press run loop</div>';
+  document.getElementById('t-count').textContent = '00 events';
+
+  const btn = document.getElementById('run-btn');
+  btn.disabled = false;
+  btn.textContent = '▶ Run loop';
+  const pill = document.getElementById('status-pill');
+  pill.textContent = 'Idle';
+  pill.className = 'status-pill status-idle';
+}
+</script>
+</body>
+</html>

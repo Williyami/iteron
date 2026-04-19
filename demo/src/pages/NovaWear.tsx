@@ -55,7 +55,7 @@ function UrgencyBanner() {
 
 function ProductCard({ product, pinnedBadge }: { product: NovaWearProduct; pinnedBadge?: string }) {
   return (
-    <div className="group flex flex-col" style={{ cursor: "pointer" }}>
+    <div className="group flex flex-col" style={{ cursor: "pointer" }} data-product-card>
       <div className="relative overflow-hidden" style={{ aspectRatio: "3/4", background: "#F0EEEB" }}>
         <img
           src={product.image}
@@ -124,7 +124,11 @@ const NovaWear = () => {
   const hero = HERO_CONTENT[heroVariant] ?? HERO_CONTENT.default;
   const ctaText = config.cta ?? hero.cta;
   const showUrgency = config.layout === "urgency";
+  const isEditorial = heroVariant === "editorial";
   const pinnedSet = new Set(config.pinned ?? []);
+  const pinnedProduct = config.pinned?.length
+    ? NOVAWEAR_PRODUCTS.find((p) => p.id === config.pinned![0])
+    : null;
 
   const womenNew = NOVAWEAR_PRODUCTS.filter((p) => p.gender === "Women" && p.isNew).slice(0, 4);
   const menNew   = NOVAWEAR_PRODUCTS.filter((p) => p.gender === "Men"   && p.isNew).slice(0, 4);
@@ -177,47 +181,69 @@ const NovaWear = () => {
         </div>
       </nav>
 
-      {/* Hero — compact split */}
-      <section className="px-8 md:px-16 py-10 md:py-12 grid md:grid-cols-2 gap-8 md:gap-16 items-center" style={{ borderBottom: "1px solid #E8E4DF" }}>
-        {/* Left: text */}
+      {/* Women's Editorial Feature — injected at top when optimization applied */}
+      {isEditorial && pinnedProduct && (
+        <section style={{ borderBottom: "1px solid #E8E4DF" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "3fr 2fr", minHeight: 540 }}>
+            <div style={{ position: "relative", overflow: "hidden", background: "#F0EEEB" }}>
+              <img
+                src={pinnedProduct.image}
+                alt={pinnedProduct.name}
+                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }}
+              />
+              {config.badge && (
+                <span style={{ position: "absolute", top: 20, left: 20, background: "rgba(255,255,255,0.95)", color: "#111", fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", padding: "5px 12px" }}>
+                  {config.badge}
+                </span>
+              )}
+            </div>
+            <div style={{ background: "#111", color: "#FAF9F7", padding: "64px 52px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+              <p style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.22em", color: "#666", marginBottom: 20 }}>
+                Women · Now featuring
+              </p>
+              <h2 style={{ ...serif, fontSize: "clamp(28px, 3vw, 46px)", color: "#FAF9F7", lineHeight: 1.05, marginBottom: 20 }}>
+                {pinnedProduct.name}
+              </h2>
+              <p style={{ fontSize: 13, color: "#888", lineHeight: 1.8, marginBottom: 28, maxWidth: "28ch" }}>
+                Elevated to the front of our Women's collection after outperforming every other piece in click-through testing.
+              </p>
+              <p style={{ ...serif, fontSize: 28, color: "#FAF9F7", marginBottom: 36 }}>
+                ${pinnedProduct.price}
+              </p>
+              <button
+                style={{ background: "#FAF9F7", color: "#111", border: "none", cursor: "pointer", padding: "14px 36px", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", alignSelf: "flex-start" }}
+                className="hover:opacity-80 transition-opacity"
+              >
+                Shop Women's
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Hero — compact banner strip */}
+      <section className="px-8 md:px-16 flex items-center justify-between gap-8 py-6" style={{ borderBottom: "1px solid #E8E4DF" }}>
         <div>
-          <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.22em", color: "#888", marginBottom: 16 }}>
+          <p style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.22em", color: "#888", marginBottom: 6 }}>
             {hero.eyebrow}
           </p>
-          <h1
-            style={{ ...serif, fontSize: "clamp(36px, 5vw, 64px)", lineHeight: 1.0, maxWidth: "14ch", whiteSpace: "pre-line", color: "#111", marginBottom: 28 }}
-          >
+          <h1 style={{ ...serif, fontSize: "clamp(22px, 3vw, 34px)", lineHeight: 1.05, color: "#111", whiteSpace: "pre-line" }}>
             {hero.headline}
           </h1>
-          <div className="flex flex-wrap gap-3">
-            <button
-              style={{ background: "#111", color: "#FAF9F7", border: "none", cursor: "pointer", padding: "11px 28px", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em" }}
-              className="hover:opacity-80 transition-opacity"
-            >
-              {ctaText}
-            </button>
-            <button
-              style={{ background: "transparent", color: "#111", border: "1px solid #D0CBC4", cursor: "pointer", padding: "11px 28px", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em" }}
-              className="hover:border-black transition-colors"
-            >
-              Explore outerwear
-            </button>
-          </div>
-          {/* Iris badge */}
-          <div className="mt-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "#EDFAF4", border: "1px solid #A7F3D0" }}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#34d399" }} />
-            <span style={{ fontSize: 10, fontWeight: 600, color: "#065f46", letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "monospace" }}>
-              Iris optimised
-            </span>
-          </div>
         </div>
-        {/* Right: contained image */}
-        <div className="relative overflow-hidden" style={{ aspectRatio: "3/4", maxHeight: 460, background: "#F0EEEB" }}>
-          <img
-            src={`${A}/hero-main.jpg`}
-            alt="NovaWear Spring Collection"
-            className="absolute inset-0 w-full h-full object-cover object-top"
-          />
+        <div className="flex items-center gap-3 shrink-0">
+          <button
+            style={{ background: "#111", color: "#FAF9F7", border: "none", cursor: "pointer", padding: "10px 24px", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em" }}
+            className="hover:opacity-80 transition-opacity"
+          >
+            {ctaText}
+          </button>
+          <button
+            style={{ background: "transparent", color: "#111", border: "1px solid #D0CBC4", cursor: "pointer", padding: "10px 24px", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em" }}
+            className="hover:border-black transition-colors"
+          >
+            Explore outerwear
+          </button>
         </div>
       </section>
 
@@ -230,6 +256,43 @@ const NovaWear = () => {
         </div>
       </section>
 
+      {/* Women · New in — hoisted above everything when editorial config applied */}
+      {isEditorial && (
+        <section className="px-8 md:px-16 py-12 md:py-16" style={{ borderBottom: "1px solid #E8E4DF", background: "#FAF9F7" }}>
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.18em", color: "#1d9e75", marginBottom: 8 }}>Optimized · Women · New in</p>
+              <h2 style={{ ...serif, fontSize: "clamp(28px, 4vw, 48px)", color: "#111" }}>For her</h2>
+            </div>
+            <button className="hidden md:block" style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "#111", background: "none", border: "none", cursor: "pointer", borderBottom: "1px solid #111" }}>
+              Shop Women →
+            </button>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
+            {applyPinning(womenNew).map((p, i) =>
+              i === 0 ? (
+                <div key={p.id} className="col-span-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+                  <div className="col-span-2 group flex flex-col" style={{ cursor: "pointer" }} data-product-card>
+                    <div className="relative overflow-hidden" style={{ aspectRatio: "16/9", background: "#F0EEEB" }}>
+                      <img src={p.image} alt={p.name} className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" />
+                      {pinnedSet.has(p.id) && config.badge && (
+                        <span className="absolute top-3 left-3 text-[10px] font-semibold uppercase px-2 py-1" style={{ background: "rgba(255,255,255,0.92)", color: "#111", letterSpacing: "0.12em" }}>{config.badge}</span>
+                      )}
+                    </div>
+                    <div className="mt-3 space-y-0.5">
+                      <p style={{ fontSize: 14, fontWeight: 500, color: "#111", letterSpacing: "-0.01em" }}>{p.name}</p>
+                      <p style={{ fontSize: 13, color: "#111" }}>${p.price}</p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <ProductCard key={p.id} product={p} pinnedBadge={pinnedSet.has(p.id) && config.badge ? config.badge : undefined} />
+              )
+            )}
+          </div>
+        </section>
+      )}
+
       {/* Shop by gender */}
       <section className="px-8 md:px-16 py-10 md:py-14">
         <div className="mb-10 md:mb-14">
@@ -238,7 +301,7 @@ const NovaWear = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
           {genderTiles.map((g) => (
-            <div key={g.title} className="group cursor-pointer">
+            <div key={g.title} className="group cursor-pointer" data-product-card>
               <div className="relative overflow-hidden" style={{ aspectRatio: "4/5" }}>
                 <img
                   src={g.img}

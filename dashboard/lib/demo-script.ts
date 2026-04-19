@@ -178,7 +178,7 @@ const NOVAWEAR_WOMENS: ScriptEvent[] = [
   { t: 10800, type: "segment.update", segment: "Womens",  ctr: 0.021 },
   { t: 11000, type: "ab.result",      segment: "Womens",  ctrBefore: 0.014, ctrAfter: 0.021, winner: "test",
     rootCause: "Oversized Blazer (nw-03) buried at position 4. Pinning with 'New' badge and setting Women's default tab lifted CTR 50%.",
-    configJson: { pinned: ["nw-03"], badge: "New", active_tab: "womens", hero_variant: "editorial" },
+    configJson: { pinned: ["ines-blazer"], badge: "New", active_tab: "womens", hero_variant: "editorial" },
   },
   { t: 11400, type: "thought",        agent: "optimizer", text: "Applying editorial layout to Women's collection" },
   { t: 11800, type: "thought",        agent: "optimizer", text: "✓ Women's now leads with its top performer." },
@@ -250,7 +250,7 @@ const NOVAWEAR_ACCESSORIES: ScriptEvent[] = [
   { t: 10800, type: "segment.update", segment: "Accessories", ctr: 0.014 },
   { t: 11000, type: "ab.result",      segment: "Accessories", ctrBefore: 0.008, ctrAfter: 0.014, winner: "test",
     rootCause: "Accessories lacked discoverability. Pinning Leather Belt with 'Limited' badge and cross-sell placements lifted cart rate 75%.",
-    configJson: { pinned: ["nw-09"], badge: "Limited", layout: "cross-sell" },
+    configJson: { pinned: ["orion-belt"], badge: "Limited", layout: "cross-sell" },
   },
   { t: 11400, type: "thought",        agent: "optimizer", text: "Applying cross-sell layout across all categories" },
   { t: 11800, type: "thought",        agent: "optimizer", text: "✓ Accessories now discoverable at peak intent moments." },
@@ -286,7 +286,7 @@ const NOVAWEAR_MENS: ScriptEvent[] = [
   { t: 10800, type: "segment.update", segment: "Mens",    ctr: 0.026 },
   { t: 11000, type: "ab.result",      segment: "Mens",    ctrBefore: 0.018, ctrAfter: 0.026, winner: "test",
     rootCause: "Chinos in hero slot buried the Suit Jacket (nw-07) at position 3. Editorial hero cut bounce 16pts and lifted CTR 44%.",
-    configJson: { active_tab: "mens", pinned: ["nw-07"], hero_variant: "mens" },
+    configJson: { active_tab: "mens", pinned: ["vance-blazer"], hero_variant: "mens" },
   },
   { t: 11400, type: "thought",        agent: "optimizer", text: "Pushing Men's editorial config — hero + tab updated" },
   { t: 11800, type: "thought",        agent: "optimizer", text: "✓ Men's now leads with its most compelling piece." },
@@ -311,18 +311,59 @@ function selectScript(goal: string, demoSite: DemoSite): ScriptEvent[] {
   return PAGETURN_ALL;
 }
 
+export interface LoopController {
+  cancel: () => void;
+  pause: () => void;
+  resume: () => void;
+}
+
 export function runDemoLoop(
   goal: string,
   demoSite: DemoSite,
   dispatch: (event: RunEvent) => void
-): () => void {
+): LoopController {
   const script = selectScript(goal, demoSite);
-  const timeouts: ReturnType<typeof setTimeout>[] = [];
-  for (const raw of script) {
-    const event: RunEvent =
-      raw.type === "run.start" ? { ...raw, goal: goal || raw.goal } : raw;
-    const id = setTimeout(() => dispatch(event), event.t);
-    timeouts.push(id);
-  }
-  return () => { for (const id of timeouts) clearTimeout(id); };
+  const events: RunEvent[] = script.map((raw) =>
+    raw.type === "run.start" ? { ...raw, goal: goal || raw.goal } : raw
+  );
+
+  let startedAt = performance.now();
+  let pausedAt: number | null = null;
+  let fired = 0;
+  let timeouts: ReturnType<typeof setTimeout>[] = [];
+  let cancelled = false;
+
+  const schedule = () => {
+    timeouts = [];
+    const now = performance.now();
+    for (let i = fired; i < events.length; i++) {
+      const ev = events[i];
+      const delay = Math.max(0, ev.t - (now - startedAt));
+      const idx = i;
+      const id = setTimeout(() => {
+        if (cancelled) return;
+        fired = idx + 1;
+        dispatch(ev);
+      }, delay);
+      timeouts.push(id);
+    }
+  };
+  schedule();
+
+  const clearAll = () => { for (const id of timeouts) clearTimeout(id); timeouts = []; };
+
+  return {
+    cancel: () => { cancelled = true; clearAll(); },
+    pause: () => {
+      if (cancelled || pausedAt !== null) return;
+      pausedAt = performance.now();
+      clearAll();
+    },
+    resume: () => {
+      if (cancelled || pausedAt === null) return;
+      startedAt += performance.now() - pausedAt;
+      pausedAt = null;
+      schedule();
+    },
+  };
 }

@@ -13,7 +13,6 @@ function greeting(now: Date = new Date()): string {
 export function OverviewHeader() {
   const runStatus = useStore((s) => s.run.status);
   const historyLen = useStore((s) => s.history.length);
-  const mode = useStore((s) => s.mode);
 
   const statusCopy =
     runStatus === "running"
@@ -25,19 +24,18 @@ export function OverviewHeader() {
       : "Everything is quiet. Pick a goal when you're ready.";
 
   return (
-    <section className="bg-bone pt-8 pb-2">
+    <section className="hero-wash pt-10 pb-6">
       <div className="dashboard-shell">
         <div className="flex items-center justify-between gap-6 flex-wrap">
           <div className="min-w-0">
-            <div
-              className="text-[12px] mb-1"
-              style={{ color: "var(--ink-faint)", fontWeight: 600, letterSpacing: "0.02em" }}
-            >
-              Overview
+            <div className="mb-3">
+              <span className="chip">
+                {runStatus === "running" ? "Loop running" : "Autonomous · always on"}
+              </span>
             </div>
             <h1
               className="text-ink"
-              style={{ fontSize: 30, fontWeight: 600, letterSpacing: "-0.03em", lineHeight: 1.15 }}
+              style={{ fontSize: 34, fontWeight: 700, letterSpacing: "-0.035em", lineHeight: 1.1 }}
             >
               {greeting()}.{" "}
               <span style={{ color: "var(--ink-muted)", fontWeight: 500 }}>
@@ -45,7 +43,7 @@ export function OverviewHeader() {
               </span>
             </h1>
             <p
-              className="mt-2 text-[14px] leading-relaxed"
+              className="mt-3 text-[15px] leading-relaxed"
               style={{ color: "var(--ink-muted)", maxWidth: 560 }}
             >
               {statusCopy}
@@ -53,11 +51,9 @@ export function OverviewHeader() {
           </div>
 
           <dl
-            className="flex items-stretch gap-0 rounded-xl overflow-hidden shrink-0"
-            style={{ border: "1px solid var(--border)", background: "var(--surface)" }}
+            className="flex items-stretch gap-0 overflow-hidden shrink-0 surface-card"
+            style={{ borderRadius: 16 }}
           >
-            <StatCell label="Mode" value={mode === "demo" ? "Demo" : "Live"} />
-            <Divider />
             <StatCell
               label="Status"
               value={

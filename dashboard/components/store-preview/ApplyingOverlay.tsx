@@ -1,6 +1,10 @@
 "use client";
 
+import { useStore } from "@/lib/store";
+
 export function ApplyingOverlay() {
+  const demoSite = useStore((s) => s.demoSite);
+  const siteLabel = demoSite === "novawear" ? "novawear" : "pageturn";
   return (
     <div
       className="absolute inset-0 flex items-center justify-center pointer-events-none applying-pulse"
@@ -20,7 +24,7 @@ export function ApplyingOverlay() {
           className="font-mono text-[10px] uppercase"
           style={{ color: "var(--ink-muted)", letterSpacing: "0.3em" }}
         >
-          · live on pageturn
+          · live on {siteLabel}
         </div>
       </div>
     </div>

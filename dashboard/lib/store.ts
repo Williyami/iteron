@@ -14,7 +14,7 @@ import type {
 import { INITIAL_CTR_BY_SITE, PIPELINE_NODES } from "./constants";
 
 type Mode = "demo" | "live";
-type RunStatus = "idle" | "running" | "complete" | "failed";
+type RunStatus = "idle" | "running" | "paused" | "complete" | "failed";
 
 interface DashboardState {
   mode: Mode;
@@ -30,6 +30,8 @@ interface DashboardState {
   historyOpen: boolean;
 
   startRun: (goal: string) => void;
+  pauseRun: () => void;
+  resumeRun: () => void;
   applyEvent: (event: RunEvent) => void;
   reset: () => void;
   setMode: (mode: Mode) => void;
@@ -88,6 +90,20 @@ export const useStore = create<DashboardState>()(
         latestAb: null,
         appliedConfig: null,
       })),
+
+    pauseRun: () =>
+      set((state) =>
+        state.run.status === "running"
+          ? { run: { ...state.run, status: "paused" } }
+          : {}
+      ),
+
+    resumeRun: () =>
+      set((state) =>
+        state.run.status === "paused"
+          ? { run: { ...state.run, status: "running" } }
+          : {}
+      ),
 
     applyEvent: (event) =>
       set((state) => {
