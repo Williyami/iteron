@@ -96,6 +96,144 @@ function NumberInput({
   );
 }
 
+type ToolId =
+  | "ui_layout" | "product_tags" | "search_ranking" | "homepage_hero" | "category_pages"
+  | "discount_rules" | "email_campaigns";
+
+interface Tool {
+  id: ToolId;
+  name: string;
+  description: string;
+  scope: "Subtle" | "Moderate" | "Broad";
+  scopeColor: string;
+  section: "on-site" | "pricing" | "off-site";
+  soon?: boolean;
+}
+
+const TOOLS: Tool[] = [
+  { id: "ui_layout",       name: "UI Layout",        description: "Tag ordering, card layout, visual hierarchy",       scope: "Subtle",   scopeColor: "var(--signal)", section: "on-site" },
+  { id: "product_tags",    name: "Product Tags",      description: "Rewrite & reorder product tags and labels",         scope: "Subtle",   scopeColor: "var(--signal)", section: "on-site" },
+  { id: "search_ranking",  name: "Search Ranking",    description: "Adjust relevance weights in site search",           scope: "Moderate", scopeColor: "var(--amber)",  section: "on-site" },
+  { id: "homepage_hero",   name: "Homepage Hero",     description: "Swap banners, CTAs, featured products",             scope: "Moderate", scopeColor: "var(--amber)",  section: "on-site" },
+  { id: "category_pages",  name: "Category Pages",    description: "Sort order and filtering defaults per genre",        scope: "Subtle",   scopeColor: "var(--signal)", section: "on-site" },
+  { id: "discount_rules",  name: "Discount Rules",    description: "Auto-apply segment-targeted discounts",             scope: "Broad",    scopeColor: "var(--rust)",   section: "pricing" },
+  { id: "email_campaigns", name: "Email Campaigns",   description: "Subject lines, send time, segment targeting",       scope: "Moderate", scopeColor: "var(--amber)",  section: "off-site" },
+];
+
+const SOON_TOOLS = [
+  { name: "Dynamic Pricing",     description: "Price sensitivity testing by segment",     scope: "Broad",    scopeColor: "var(--rust)"   },
+  { name: "Ad Copy",             description: "Test headlines in paid ads",               scope: "Moderate", scopeColor: "var(--amber)"  },
+  { name: "Push Notifications",  description: "Timing and copy for browser/mobile pushes", scope: "Moderate", scopeColor: "var(--amber)" },
+];
+
+const SECTION_LABELS: Record<string, string> = {
+  "on-site": "On-site Experience",
+  "pricing": "Pricing & Promotions",
+  "off-site": "Off-site Channels",
+};
+
+function ToolboxTable({
+  enabled, onToggle,
+}: {
+  enabled: Record<ToolId, boolean>;
+  onToggle: (id: ToolId) => void;
+}) {
+  const sections = ["on-site", "pricing", "off-site"] as const;
+  return (
+    <div className="w-full overflow-hidden rounded-xl" style={{ border: "1px solid var(--hairline)" }}>
+      <table className="w-full" style={{ borderCollapse: "collapse" }}>
+        <thead>
+          <tr style={{ background: "var(--surface-2)", borderBottom: "1px solid var(--hairline)" }}>
+            {["Tool", "Scope", "Enabled"].map((h, i) => (
+              <th
+                key={h}
+                className="font-mono text-[10px] uppercase py-2.5 px-4 font-normal"
+                style={{
+                  letterSpacing: "0.14em",
+                  color: "var(--ink-faint)",
+                  textAlign: i === 2 ? "center" : "left",
+                }}
+              >
+                {h}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {sections.map((sec) => {
+            const tools = TOOLS.filter((t) => t.section === sec);
+            return (
+              <>
+                <tr key={`sec-${sec}`} style={{ background: "var(--surface-2)", borderBottom: "1px solid var(--hairline)" }}>
+                  <td
+                    colSpan={3}
+                    className="px-4 py-2 font-mono text-[10px] uppercase"
+                    style={{ letterSpacing: "0.1em", color: "var(--ink-faint)", fontWeight: 700 }}
+                  >
+                    {SECTION_LABELS[sec]}
+                  </td>
+                </tr>
+                {tools.map((tool) => {
+                  return (
+                    <tr
+                      key={tool.id}
+                      style={{ borderBottom: "1px solid var(--hairline-soft)" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "var(--surface-2)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                    >
+                      <td className="px-4 py-3">
+                        <div className="text-[13px] font-semibold" style={{ color: "var(--ink)" }}>{tool.name}</div>
+                        <div className="text-[11px] mt-0.5" style={{ color: "var(--ink-faint)" }}>{tool.description}</div>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <span
+                          className="font-mono text-[9px] uppercase px-2 py-0.5 rounded"
+                          style={{
+                            letterSpacing: "0.06em",
+                            color: tool.scopeColor,
+                            background: `color-mix(in oklch, ${tool.scopeColor} 12%, transparent)`,
+                          }}
+                        >
+                          {tool.scope}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <Toggle checked={enabled[tool.id]} onChange={() => onToggle(tool.id)} />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </>
+            );
+          })}
+          {/* Soon rows */}
+          <tr style={{ background: "var(--surface-2)", borderBottom: "1px solid var(--hairline)" }}>
+            <td colSpan={3} className="px-4 py-2 font-mono text-[10px] uppercase" style={{ letterSpacing: "0.1em", color: "var(--ink-faint)", fontWeight: 700 }}>
+              Coming soon
+            </td>
+          </tr>
+          {SOON_TOOLS.map((t, i) => (
+            <tr key={t.name} style={{ borderBottom: i < SOON_TOOLS.length - 1 ? "1px solid var(--hairline-soft)" : undefined, opacity: 0.45 }}>
+              <td className="px-4 py-3">
+                <div className="text-[13px] font-semibold" style={{ color: "var(--ink)" }}>{t.name}</div>
+                <div className="text-[11px] mt-0.5" style={{ color: "var(--ink-faint)" }}>{t.description}</div>
+              </td>
+              <td className="px-4 py-3">
+                <span className="font-mono text-[9px] uppercase px-2 py-0.5 rounded" style={{ letterSpacing: "0.06em", color: t.scopeColor, background: `color-mix(in oklch, ${t.scopeColor} 12%, transparent)` }}>
+                  {t.scope}
+                </span>
+              </td>
+              <td className="px-4 py-3 text-center">
+                <Toggle checked={false} onChange={() => {}} />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export function SettingsPanel() {
   const mode        = useStore((s) => s.mode);
   const setMode     = useStore((s) => s.setMode);
@@ -115,6 +253,12 @@ export function SettingsPanel() {
   const [retention,          setRetention]          = useState("90");
   const [targetMetric,       setTargetMetric]       = useState("ctr");
   const [saved,              setSaved]              = useState(false);
+  const [toolEnabled, setToolEnabled]               = useState<Record<ToolId, boolean>>({
+    ui_layout: true, product_tags: true, search_ranking: false,
+    homepage_hero: false, category_pages: false, discount_rules: false, email_campaigns: false,
+  });
+
+  const toggleTool = (id: ToolId) => setToolEnabled((prev) => ({ ...prev, [id]: !prev[id] }));
 
   const handleSave = () => {
     setSaved(true);
@@ -132,6 +276,19 @@ export function SettingsPanel() {
         <div className="mt-1 text-[13px]" style={{ color: "var(--ink-muted)" }}>
           Configure how Iteron agents behave, alert, and apply changes.
         </div>
+      </div>
+
+      {/* Optimization toolbox */}
+      <div>
+        <div className="mb-3">
+          <span className="font-mono text-[10px] uppercase" style={{ color: "var(--ink-faint)", letterSpacing: "0.18em" }}>
+            Optimization toolbox
+          </span>
+          <p className="text-[12px] mt-1" style={{ color: "var(--ink-faint)" }}>
+            Enable the levers Iteron is allowed to use. Changes apply on the next run.
+          </p>
+        </div>
+        <ToolboxTable enabled={toolEnabled} onToggle={toggleTool} />
       </div>
 
       {/* Agent behaviour */}

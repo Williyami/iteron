@@ -1,0 +1,173 @@
+<style>
+  .wrap { max-width: 760px; margin: 0 auto; }
+
+  /* ── Option A: Toggle list ── */
+  .toggle-list { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 13px 18px; border-bottom: 1px solid var(--border);
+  }
+  .toggle-row:last-child { border-bottom: none; }
+  .toggle-left { display: flex; flex-direction: column; gap: 2px; }
+  .toggle-name { font-size: 13px; font-weight: 600; }
+  .toggle-desc { font-size: 11px; color: var(--text-muted); }
+  .toggle-pill {
+    width: 36px; height: 20px; border-radius: 10px; flex-shrink: 0;
+    display: flex; align-items: center; padding: 2px;
+    transition: background 0.2s;
+  }
+  .toggle-pill.on { background: #1D9E75; justify-content: flex-end; }
+  .toggle-pill.off { background: var(--border); justify-content: flex-start; }
+  .toggle-knob { width: 16px; height: 16px; border-radius: 50%; background: white; }
+  .toggle-section-header {
+    padding: 8px 18px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-muted);
+    background: color-mix(in srgb, var(--border) 30%, var(--surface));
+    border-bottom: 1px solid var(--border);
+  }
+  .risk-chip {
+    font-size: 9px; font-family: monospace; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 2px 6px; border-radius: 3px; margin-left: 8px;
+  }
+  .risk-low { background: color-mix(in srgb, #1D9E75 15%, transparent); color: #1D9E75; }
+  .risk-mid { background: color-mix(in srgb, #c9a83c 15%, transparent); color: #c9a83c; }
+  .risk-high { background: color-mix(in srgb, #b55a3a 15%, transparent); color: #b55a3a; }
+  .soon-tag { font-size: 9px; font-family: monospace; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-left: 8px; }
+
+  /* ── Option B: Two-column enabled/available ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .col-panel { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .col-header {
+    padding: 10px 16px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; border-bottom: 1px solid var(--border);
+  }
+  .col-header.enabled { color: #1D9E75; }
+  .col-header.available { color: var(--text-muted); }
+  .col-item {
+    padding: 10px 16px; font-size: 12px; font-weight: 500;
+    border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px;
+  }
+  .col-item:last-child { border-bottom: none; }
+  .col-item .arrow { font-size: 10px; color: var(--text-muted); margin-left: auto; cursor: pointer; }
+  .col-dot { width: 6px; height: 6px; border-radius: 50%; background: #1D9E75; flex-shrink: 0; }
+  .col-dot.off { background: var(--border); }
+
+  /* ── Option C: Table ── */
+  .tool-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .tool-table th {
+    text-align: left; padding: 8px 12px; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .tool-table td { padding: 11px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .tool-table tr:last-child td { border-bottom: none; }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+  .status-on { background: #1D9E75; }
+  .status-off { background: var(--border); }
+  .table-category { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); padding: 14px 12px 4px; }
+</style>
+
+<div class="wrap">
+  <h2>Pick a toolbox layout</h2>
+  <p class="subtitle">Same content, three different approaches.</p>
+
+  <!-- Option A -->
+  <div class="options" style="margin-bottom:0">
+    <div class="option" data-choice="a" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>Toggle list</h3>
+        <p>Grouped rows with on/off toggles and risk labels inline</p>
+        <div style="margin-top:14px; pointer-events:none">
+          <div class="toggle-list">
+            <div class="toggle-section-header">On-site Experience</div>
+            <div class="toggle-row">
+              <div class="toggle-left">
+                <div class="toggle-name">UI Layout <span class="risk-chip risk-low">Low risk</span></div>
+                <div class="toggle-desc">Tag ordering, card layout, visual hierarchy</div>
+              </div>
+              <div class="toggle-pill on"><div class="toggle-knob"></div></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-left">
+                <div class="toggle-name">Product Tags <span class="risk-chip risk-low">Low risk</span></div>
+                <div class="toggle-desc">Rewrite & reorder product tags</div>
+              </div>
+              <div class="toggle-pill on"><div class="toggle-knob"></div></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-left">
+                <div class="toggle-name">Search Ranking <span class="risk-chip risk-mid">Medium risk</span></div>
+                <div class="toggle-desc">Adjust relevance weights in site search</div>
+              </div>
+              <div class="toggle-pill off"><div class="toggle-knob"></div></div>
+            </div>
+            <div class="toggle-section-header">Pricing & Promotions</div>
+            <div class="toggle-row">
+              <div class="toggle-left">
+                <div class="toggle-name">Discount Rules <span class="risk-chip risk-high">High risk</span></div>
+                <div class="toggle-desc">Auto-apply segment-targeted discounts</div>
+              </div>
+              <div class="toggle-pill off"><div class="toggle-knob"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Option B -->
+    <div class="option" data-choice="b" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>Two-column: Enabled / Available</h3>
+        <p>Drag or click arrows to move tools between columns</p>
+        <div style="margin-top:14px; pointer-events:none">
+          <div class="two-col">
+            <div class="col-panel">
+              <div class="col-header enabled">● Enabled</div>
+              <div class="col-item"><div class="col-dot"></div>UI Layout<span class="arrow">→</span></div>
+              <div class="col-item"><div class="col-dot"></div>Product Tags<span class="arrow">→</span></div>
+              <div class="col-item"><div class="col-dot"></div>Email Campaigns<span class="arrow">→</span></div>
+            </div>
+            <div class="col-panel">
+              <div class="col-header available">Available</div>
+              <div class="col-item"><div class="col-dot off"></div>Search Ranking<span class="arrow">←</span></div>
+              <div class="col-item"><div class="col-dot off"></div>Homepage Hero<span class="arrow">←</span></div>
+              <div class="col-item"><div class="col-dot off"></div>Discount Rules<span class="arrow">←</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Option C -->
+    <div class="option" data-choice="c" onclick="toggleSelect(this)">
+      <div class="letter">C</div>
+      <div class="content">
+        <h3>Table view</h3>
+        <p>Dense, scannable — status, channel, and risk at a glance</p>
+        <div style="margin-top:14px; pointer-events:none">
+          <table class="tool-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Tool</th>
+                <th>Channel</th>
+                <th>Risk</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="4" class="table-category">On-site</td></tr>
+              <tr><td><span class="status-dot status-on"></span></td><td>UI Layout</td><td style="color:var(--text-muted);font-size:11px">On-site</td><td><span class="risk-chip risk-low">Low</span></td></tr>
+              <tr><td><span class="status-dot status-on"></span></td><td>Product Tags</td><td style="color:var(--text-muted);font-size:11px">On-site</td><td><span class="risk-chip risk-low">Low</span></td></tr>
+              <tr><td><span class="status-dot status-off"></span></td><td>Search Ranking</td><td style="color:var(--text-muted);font-size:11px">On-site</td><td><span class="risk-chip risk-mid">Med</span></td></tr>
+              <tr><td colspan="4" class="table-category">Off-site</td></tr>
+              <tr><td><span class="status-dot status-off"></span></td><td>Email Campaigns</td><td style="color:var(--text-muted);font-size:11px">Email</td><td><span class="risk-chip risk-mid">Med</span></td></tr>
+              <tr><td><span class="status-dot status-off"></span></td><td>Discount Rules</td><td style="color:var(--text-muted);font-size:11px">Pricing</td><td><span class="risk-chip risk-high">High</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

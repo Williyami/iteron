@@ -1,0 +1,125 @@
+<style>
+  .wrap { max-width: 700px; margin: 0 auto; }
+  .tool-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tool-table th {
+    text-align: left; padding: 8px 14px; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+  }
+  .tool-table th:last-child { text-align: center; }
+  .tool-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .tool-table tr:last-child td { border-bottom: none; }
+  .tool-table tr:hover td { background: color-mix(in srgb, var(--border) 20%, var(--surface)); }
+  .category-row td {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-muted); padding: 14px 14px 4px;
+    background: color-mix(in srgb, var(--border) 30%, var(--surface));
+    border-bottom: 1px solid var(--border);
+  }
+  .tool-name { font-weight: 600; }
+  .tool-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .risk-chip {
+    font-size: 9px; font-family: monospace; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 3px;
+  }
+  .risk-low { background: color-mix(in srgb, #1D9E75 15%, transparent); color: #1D9E75; }
+  .risk-mid { background: color-mix(in srgb, #c9a83c 15%, transparent); color: #c9a83c; }
+  .risk-high { background: color-mix(in srgb, #b55a3a 15%, transparent); color: #b55a3a; }
+  .channel-tag { font-size: 10px; font-family: monospace; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .soon-tag { font-size: 9px; font-family: monospace; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* Toggle */
+  .toggle { display: flex; justify-content: center; }
+  .toggle-pill {
+    width: 38px; height: 21px; border-radius: 11px;
+    display: flex; align-items: center; padding: 2px; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle-pill.on { background: #1D9E75; justify-content: flex-end; }
+  .toggle-pill.off { background: var(--border); justify-content: flex-start; }
+  .toggle-pill.disabled { background: var(--border); opacity: 0.4; cursor: default; }
+  .toggle-knob { width: 17px; height: 17px; border-radius: 50%; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+</style>
+
+<div class="wrap">
+  <h2>Optimization Toolbox</h2>
+  <p class="subtitle">Enable the levers Iteron is allowed to use. Changes apply on the next run.</p>
+
+  <table class="tool-table">
+    <thead>
+      <tr>
+        <th>Tool</th>
+        <th>Channel</th>
+        <th>Risk</th>
+        <th>Enabled</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="category-row"><td colspan="4">On-site Experience</td></tr>
+      <tr>
+        <td><div class="tool-name">UI Layout</div><div class="tool-desc">Tag ordering, card layout, visual hierarchy</div></td>
+        <td><span class="channel-tag">On-site</span></td>
+        <td><span class="risk-chip risk-low">Low</span></td>
+        <td><div class="toggle"><div class="toggle-pill on"><div class="toggle-knob"></div></div></div></td>
+      </tr>
+      <tr>
+        <td><div class="tool-name">Product Tags</div><div class="tool-desc">Rewrite & reorder product tags and labels</div></td>
+        <td><span class="channel-tag">On-site</span></td>
+        <td><span class="risk-chip risk-low">Low</span></td>
+        <td><div class="toggle"><div class="toggle-pill on"><div class="toggle-knob"></div></div></div></td>
+      </tr>
+      <tr>
+        <td><div class="tool-name">Search Ranking</div><div class="tool-desc">Adjust relevance weights in site search</div></td>
+        <td><span class="channel-tag">On-site</span></td>
+        <td><span class="risk-chip risk-mid">Medium</span></td>
+        <td><div class="toggle"><div class="toggle-pill off"><div class="toggle-knob"></div></div></div></td>
+      </tr>
+      <tr>
+        <td><div class="tool-name">Homepage Hero</div><div class="tool-desc">Swap banners, CTAs, featured products</div></td>
+        <td><span class="channel-tag">On-site</span></td>
+        <td><span class="risk-chip risk-mid">Medium</span></td>
+        <td><div class="toggle"><div class="toggle-pill off"><div class="toggle-knob"></div></div></div></td>
+      </tr>
+      <tr>
+        <td><div class="tool-name">Category Pages</div><div class="tool-desc">Sort order and filtering defaults per genre</div></td>
+        <td><span class="channel-tag">On-site</span></td>
+        <td><span class="risk-chip risk-low">Low</span></td>
+        <td><div class="toggle"><div class="toggle-pill off"><div class="toggle-knob"></div></div></div></td>
+      </tr>
+
+      <tr class="category-row"><td colspan="4">Pricing & Promotions</td></tr>
+      <tr>
+        <td><div class="tool-name">Discount Rules</div><div class="tool-desc">Auto-apply segment-targeted discounts</div></td>
+        <td><span class="channel-tag">Pricing</span></td>
+        <td><span class="risk-chip risk-high">High</span></td>
+        <td><div class="toggle"><div class="toggle-pill off"><div class="toggle-knob"></div></div></div></td>
+      </tr>
+      <tr>
+        <td><div class="tool-name">Dynamic Pricing <span class="soon-tag">· Soon</span></div><div class="tool-desc">Price sensitivity testing by segment</div></td>
+        <td><span class="channel-tag">Pricing</span></td>
+        <td><span class="risk-chip risk-high">High</span></td>
+        <td><div class="toggle"><div class="toggle-pill disabled"><div class="toggle-knob"></div></div></div></td>
+      </tr>
+
+      <tr class="category-row"><td colspan="4">Off-site Channels</td></tr>
+      <tr>
+        <td><div class="tool-name">Email Campaigns</div><div class="tool-desc">Subject lines, send time, segment targeting</div></td>
+        <td><span class="channel-tag">Email</span></td>
+        <td><span class="risk-chip risk-mid">Medium</span></td>
+        <td><div class="toggle"><div class="toggle-pill off"><div class="toggle-knob"></div></div></div></td>
+      </tr>
+      <tr>
+        <td><div class="tool-name">Ad Copy <span class="soon-tag">· Soon</span></div><div class="tool-desc">Test headlines in paid ads</div></td>
+        <td><span class="channel-tag">Ads</span></td>
+        <td><span class="risk-chip risk-mid">Medium</span></td>
+        <td><div class="toggle"><div class="toggle-pill disabled"><div class="toggle-knob"></div></div></div></td>
+      </tr>
+      <tr>
+        <td><div class="tool-name">Push Notifications <span class="soon-tag">· Soon</span></div><div class="tool-desc">Timing and copy for browser/mobile pushes</div></td>
+        <td><span class="channel-tag">Push</span></td>
+        <td><span class="risk-chip risk-mid">Medium</span></td>
+        <td><div class="toggle"><div class="toggle-pill disabled"><div class="toggle-knob"></div></div></div></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

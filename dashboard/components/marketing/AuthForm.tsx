@@ -117,9 +117,12 @@ export function AuthForm({
         <span className="flex-1 h-px" style={{ background: "var(--border)" }} />
       </div>
 
-      <div className="mt-5 grid grid-cols-2 gap-3">
-        <SocialButton label="Google" />
-        <SocialButton label="GitHub" />
+      <div className="mt-5 flex flex-col gap-2.5">
+        <SocialButton label="Apple" fullWidth />
+        <div className="grid grid-cols-2 gap-2.5">
+          <SocialButton label="Google" />
+          <SocialButton label="GitHub" />
+        </div>
       </div>
     </div>
   );
@@ -177,28 +180,39 @@ function Field({
   );
 }
 
-function SocialButton({ label }: { label: string }) {
+function SocialButton({ label, fullWidth }: { label: string; fullWidth?: boolean }) {
+  const isApple = label === "Apple";
   return (
     <button
       type="button"
-      className="rounded-xl px-4 py-2.5 text-[13.5px] font-semibold transition-colors flex items-center justify-center gap-2"
-      style={{
-        background: "var(--paper)",
-        border: "1px solid var(--border)",
-        color: "var(--ink)",
-      }}
+      className={`rounded-xl px-4 py-2.5 text-[13.5px] font-semibold transition-all flex items-center justify-center gap-2${fullWidth ? " w-full" : ""}`}
+      style={
+        isApple
+          ? { background: "#000", border: "1px solid #000", color: "#fff" }
+          : { background: "var(--paper)", border: "1px solid var(--border)", color: "var(--ink)" }
+      }
       onMouseEnter={(e) => {
+        if (isApple) { e.currentTarget.style.background = "#1a1a1a"; return; }
         e.currentTarget.style.borderColor = "var(--hairline-strong, rgba(15,31,46,0.22))";
         e.currentTarget.style.background = "var(--surface)";
       }}
       onMouseLeave={(e) => {
+        if (isApple) { e.currentTarget.style.background = "#000"; return; }
         e.currentTarget.style.borderColor = "var(--border)";
         e.currentTarget.style.background = "var(--paper)";
       }}
     >
-      {label === "Google" ? <GoogleIcon /> : <GitHubIcon />}
-      {label}
+      {label === "Google" ? <GoogleIcon /> : label === "GitHub" ? <GitHubIcon /> : <AppleIcon />}
+      {label === "Apple" ? "Continue with Apple" : label}
     </button>
+  );
+}
+
+function AppleIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 14 17" fill="currentColor" aria-hidden>
+      <path d="M13.27 12.18c-.27.62-.59 1.19-.97 1.72-.51.72-.93 1.22-1.26 1.49-.5.46-1.04.7-1.62.71-.41 0-.91-.12-1.49-.35-.58-.24-1.12-.35-1.6-.35-.51 0-1.06.12-1.65.35-.59.24-1.07.36-1.44.37-.56.02-1.11-.23-1.65-.73-.36-.3-.8-.82-1.33-1.57a7.49 7.49 0 0 1-1.06-2c-.31-.86-.47-1.69-.47-2.49 0-.92.2-1.71.6-2.38a3.52 3.52 0 0 1 1.25-1.27 3.37 3.37 0 0 1 1.7-.48c.44 0 1.02.14 1.74.4.72.27 1.18.4 1.38.4.15 0 .66-.16 1.53-.47.82-.29 1.51-.41 2.08-.37 1.54.12 2.7.73 3.46 1.83a3.4 3.4 0 0 0-2.04 3.09c.01.92.34 1.69.98 2.3.29.28.62.49.98.64l-.11.35ZM10.18.33c0 .72-.26 1.39-.79 2.01-.63.74-1.4 1.17-2.23 1.1a2.25 2.25 0 0 1-.02-.27c0-.7.3-1.44.84-2.05a3.1 3.1 0 0 1 1-.74A3.01 3.01 0 0 1 10.17 0c.01.11.01.22.01.33Z" />
+    </svg>
   );
 }
 

@@ -8,6 +8,7 @@ import { IteronLogo } from "@/components/brand/IteronLogo";
 const NAV = [
   { href: "/product", label: "Product" },
   { href: "/product#loop", label: "How it works" },
+  { href: "/pricing", label: "Pricing" },
 ];
 
 export function MarketingNav({

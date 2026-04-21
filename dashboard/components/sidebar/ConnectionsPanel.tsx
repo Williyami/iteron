@@ -31,6 +31,12 @@ async function pingUrl(url: string, timeoutMs = 2500): Promise<Status> {
   }
 }
 
+const COMING_SOON = [
+  { name: "Shopify",      kind: "E-commerce · App",       description: "Install the Iteron app from the Shopify App Store to connect your store in one click." },
+  { name: "WooCommerce",  kind: "E-commerce · Plugin",    description: "Drop in the WordPress plugin and point it at your Iteron workspace URL." },
+  { name: "Klaviyo",      kind: "Email · CDP",            description: "Sync Iteron segments to Klaviyo lists for email campaign personalization." },
+];
+
 const CONNECTIONS: Connection[] = [
   {
     id: "supabase",
@@ -301,6 +307,31 @@ export function ConnectionsPanel() {
             </article>
           );
         })}
+      </div>
+
+      {/* Coming soon */}
+      <div>
+        <div className="font-mono text-[10px] uppercase mb-3" style={{ color: "var(--ink-faint)", letterSpacing: "0.18em" }}>
+          Coming soon
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {COMING_SOON.map((c) => (
+            <div
+              key={c.name}
+              className="rounded-xl p-5"
+              style={{ background: "var(--surface)", border: "1px solid var(--border)", opacity: 0.6 }}
+            >
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="text-[14px] font-semibold" style={{ color: "var(--ink)" }}>{c.name}</h3>
+                <span className="font-mono text-[9px] uppercase px-2 py-0.5 rounded" style={{ letterSpacing: "0.08em", background: "var(--surface-2)", color: "var(--ink-faint)", border: "1px solid var(--border)" }}>
+                  Soon
+                </span>
+              </div>
+              <div className="text-[11px] uppercase font-semibold mb-2" style={{ color: "var(--ink-faint)", letterSpacing: "0.08em" }}>{c.kind}</div>
+              <p className="text-[12.5px] leading-[1.55]" style={{ color: "var(--ink-muted)" }}>{c.description}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div

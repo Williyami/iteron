@@ -1,0 +1,130 @@
+<style>
+  .toolbox-wrap { max-width: 720px; margin: 0 auto; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
+  .tool-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 28px; }
+  .tool-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+    background: var(--surface);
+  }
+  .tool-card.on {
+    border-color: #1D9E75;
+    background: color-mix(in srgb, #1D9E75 8%, var(--surface));
+  }
+  .tool-card:hover { border-color: #1D9E75; }
+  .tool-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .tool-desc { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+  .tool-badge {
+    position: absolute;
+    top: 10px; right: 10px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+  }
+  .badge-on { background: #1D9E75; color: white; }
+  .badge-off { background: var(--border); color: var(--text-muted); }
+  .badge-soon { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
+  .risk-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+  .risk-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .risk-low { background: #1D9E75; }
+  .risk-mid { background: #c9a83c; }
+  .risk-high { background: #b55a3a; }
+  .risk-label { font-size: 10px; color: var(--text-muted); font-family: monospace; text-transform: uppercase; letter-spacing: 0.06em; }
+</style>
+
+<div class="toolbox-wrap">
+  <h2>Optimization Toolbox</h2>
+  <p class="subtitle">Choose which levers Iteron is allowed to use. Enabled tools apply automatically when the agent loop runs.</p>
+
+  <div class="section-label">On-site Experience</div>
+  <div class="tool-grid">
+    <div class="tool-card on">
+      <span class="tool-badge badge-on">ON</span>
+      <div class="tool-name">UI Layout</div>
+      <div class="tool-desc">Tag ordering, card layout, visual hierarchy</div>
+      <div class="risk-row"><div class="risk-dot risk-low"></div><div class="risk-label">Low risk</div></div>
+    </div>
+    <div class="tool-card on">
+      <span class="tool-badge badge-on">ON</span>
+      <div class="tool-name">Product Tags</div>
+      <div class="tool-desc">Rewrite & reorder product tags and labels</div>
+      <div class="risk-row"><div class="risk-dot risk-low"></div><div class="risk-label">Low risk</div></div>
+    </div>
+    <div class="tool-card">
+      <span class="tool-badge badge-off">OFF</span>
+      <div class="tool-name">Search Ranking</div>
+      <div class="tool-desc">Adjust relevance weights in site search</div>
+      <div class="risk-row"><div class="risk-dot risk-mid"></div><div class="risk-label">Medium risk</div></div>
+    </div>
+    <div class="tool-card">
+      <span class="tool-badge badge-off">OFF</span>
+      <div class="tool-name">Homepage Hero</div>
+      <div class="tool-desc">Swap hero banners, CTAs, featured products</div>
+      <div class="risk-row"><div class="risk-dot risk-mid"></div><div class="risk-label">Medium risk</div></div>
+    </div>
+    <div class="tool-card">
+      <span class="tool-badge badge-off">OFF</span>
+      <div class="tool-name">Recommendations</div>
+      <div class="tool-desc">Reorder "you may also like" carousels</div>
+      <div class="risk-row"><div class="risk-dot risk-low"></div><div class="risk-label">Low risk</div></div>
+    </div>
+    <div class="tool-card">
+      <span class="tool-badge badge-off">OFF</span>
+      <div class="tool-name">Category Pages</div>
+      <div class="tool-desc">Sort order and filtering defaults per genre</div>
+      <div class="risk-row"><div class="risk-dot risk-low"></div><div class="risk-label">Low risk</div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Pricing & Promotions</div>
+  <div class="tool-grid">
+    <div class="tool-card">
+      <span class="tool-badge badge-off">OFF</span>
+      <div class="tool-name">Discount Rules</div>
+      <div class="tool-desc">Auto-apply segment-targeted discounts</div>
+      <div class="risk-row"><div class="risk-dot risk-high"></div><div class="risk-label">High risk</div></div>
+    </div>
+    <div class="tool-card">
+      <span class="tool-badge badge-soon">SOON</span>
+      <div class="tool-name">Dynamic Pricing</div>
+      <div class="tool-desc">Price sensitivity testing by segment</div>
+      <div class="risk-row"><div class="risk-dot risk-high"></div><div class="risk-label">High risk</div></div>
+    </div>
+    <div class="tool-card">
+      <span class="tool-badge badge-soon">SOON</span>
+      <div class="tool-name">Bundle Offers</div>
+      <div class="tool-desc">Generate and test product bundle suggestions</div>
+      <div class="risk-row"><div class="risk-dot risk-mid"></div><div class="risk-label">Medium risk</div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Off-site Channels</div>
+  <div class="tool-grid">
+    <div class="tool-card">
+      <span class="tool-badge badge-off">OFF</span>
+      <div class="tool-name">Email Campaigns</div>
+      <div class="tool-desc">Subject lines, send time, segment targeting</div>
+      <div class="risk-row"><div class="risk-dot risk-mid"></div><div class="risk-label">Medium risk</div></div>
+    </div>
+    <div class="tool-card">
+      <span class="tool-badge badge-soon">SOON</span>
+      <div class="tool-name">Ad Copy</div>
+      <div class="tool-desc">Test headlines and descriptions in paid ads</div>
+      <div class="risk-row"><div class="risk-dot risk-mid"></div><div class="risk-label">Medium risk</div></div>
+    </div>
+    <div class="tool-card">
+      <span class="tool-badge badge-soon">SOON</span>
+      <div class="tool-name">Push Notifications</div>
+      <div class="tool-desc">Timing and copy for browser/mobile pushes</div>
+      <div class="risk-row"><div class="risk-dot risk-mid"></div><div class="risk-label">Medium risk</div></div>
+    </div>
+  </div>
+</div>
